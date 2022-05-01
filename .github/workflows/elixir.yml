@@ -48,7 +48,7 @@ jobs:
     - name: Check Formatting
       run: mix format --check-formatted
     - name: Check Linting
-      run: mix credo
+      run: mix credo --strict
 
   deploy:
     name: Deploy to Gigalixir
