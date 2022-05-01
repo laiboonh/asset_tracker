@@ -1,19 +1,18 @@
-# AssetTracker
+[![Elixir CI](https://github.com/laiboonh/asset_tracker/actions/workflows/elixir.yml/badge.svg)](https://github.com/laiboonh/asset_tracker/actions/workflows/elixir.yml)
 
-To start your Phoenix server:
+# Setup
+- Install asdf
+- `asdf install`
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+# Run
+- `mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+# How to manage giglixir database
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Reset database
+- `gigalixir ps:remote_console -a asset-tracker`
+- `Ecto.Migrator.run(AssetTracker.Repo, Application.app_dir(:asset_tracker, "priv/repo/migrations"), :down, [all: true])`
+- `Ecto.Migrator.run(AssetTracker.Repo, Application.app_dir(:asset_tracker, "priv/repo/migrations"), :up, [all: true])`
 
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+## Run migration
+- `gigalixir ps:migrate -a asset-tracker`
