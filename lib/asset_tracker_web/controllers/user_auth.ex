@@ -1,4 +1,5 @@
 defmodule AssetTrackerWeb.UserAuth do
+  @moduledoc false
   import Plug.Conn
   import Phoenix.Controller
 

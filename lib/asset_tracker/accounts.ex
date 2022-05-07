@@ -4,9 +4,9 @@ defmodule AssetTracker.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias AssetTracker.Repo
 
-  alias AssetTracker.Accounts.{User, UserToken, UserNotifier}
+  alias AssetTracker.Accounts.{User, UserNotifier, UserToken}
+  alias AssetTracker.Repo
 
   ## Database getters
 
