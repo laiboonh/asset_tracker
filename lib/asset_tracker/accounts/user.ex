@@ -35,6 +35,13 @@ defmodule AssetTracker.Accounts.User do
     |> validate_password(opts)
   end
 
+  def registration_without_password_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(Map.put(attrs, :password, AssetTracker.Utils.random_string(64)), [:email, :password])
+    |> validate_required([:email])
+    |> validate_password(opts)
+  end
+
   defp validate_email(changeset) do
     changeset
     |> validate_required([:email])
@@ -57,6 +64,10 @@ defmodule AssetTracker.Accounts.User do
   defp maybe_hash_password(changeset, opts) do
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)
+
+    hash_password? |> IO.inspect()
+    password |> IO.inspect()
+    changeset.valid? |> IO.inspect()
 
     if hash_password? && password && changeset.valid? do
       changeset

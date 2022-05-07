@@ -80,6 +80,12 @@ defmodule AssetTracker.Accounts do
     |> Repo.insert()
   end
 
+  def upsert_user(attrs) do
+    %User{}
+    |> User.registration_without_password_changeset(attrs)
+    |> Repo.insert(on_conflict: :nothing, conflict_target: :email)
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
