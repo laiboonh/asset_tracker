@@ -47,6 +47,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :elixir_auth_google,
+  client_id: "726665494450-ng7lhavsiih7ejt8ab4ks0kmaeqlqvin.apps.googleusercontent.com",
+  client_secret: "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"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
