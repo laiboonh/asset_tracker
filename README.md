@@ -3,6 +3,9 @@
 # Setup
 - Install asdf
 - `asdf install`
+- Install direnv
+- `curl -sfL https://direnv.net/install.sh | bash`
+- `direnv allow`
 
 # Run
 - `mix phx.server`
