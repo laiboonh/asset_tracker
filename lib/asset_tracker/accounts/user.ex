@@ -65,10 +65,6 @@ defmodule AssetTracker.Accounts.User do
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)
 
-    hash_password? |> IO.inspect()
-    password |> IO.inspect()
-    changeset.valid? |> IO.inspect()
-
     if hash_password? && password && changeset.valid? do
       changeset
       # If using Bcrypt, then further validate it is at most 72 bytes long

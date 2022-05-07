@@ -1,6 +1,8 @@
 defmodule AssetTrackerWeb.GoogleAuthController do
   use AssetTrackerWeb, :controller
+
   alias AssetTracker.Accounts
+  alias AssetTrackerWeb.UserAuth
 
   @doc """
   `index/2` handles the callback from Google Auth API redirect.
@@ -10,14 +12,14 @@ defmodule AssetTrackerWeb.GoogleAuthController do
     {:ok, profile} = ElixirAuthGoogle.get_user_profile(token.access_token)
 
     case Accounts.upsert_user(%{email: profile.email}) do
-      {:ok, _user} ->
+      {:ok, user} ->
         conn
-        |> render(:welcome, profile: profile)
+        |> UserAuth.log_in_user(user)
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> put_flash(:error, "User record was not created successfully. #{inspect(changeset)}")
-        |> render(:welcome, profile: profile)
+        |> redirect(to: Routes.user_session_path(conn, :new))
     end
   end
 end
