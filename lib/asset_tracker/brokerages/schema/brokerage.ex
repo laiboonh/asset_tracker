@@ -1,4 +1,6 @@
 defmodule AssetTracker.Brokerages.Schema.Brokerage do
+  @moduledoc false
+
   use Ecto.Schema
   import Ecto.Changeset
 
