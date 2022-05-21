@@ -4,7 +4,7 @@ defmodule AssetTracker.BrokeragesTest do
   alias AssetTracker.Brokerages.BrokerageLogic
 
   describe "brokerage" do
-    alias AssetTracker.Brokerages.Schema.Brokerage
+    alias AssetTracker.Brokerages.Brokerage
 
     import AssetTracker.BrokeragesFixtures
 

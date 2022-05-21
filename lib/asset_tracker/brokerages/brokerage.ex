@@ -1,4 +1,4 @@
-defmodule AssetTracker.Brokerages.Schema.Brokerage do
+defmodule AssetTracker.Brokerages.Brokerage do
   @moduledoc false
 
   use Ecto.Schema

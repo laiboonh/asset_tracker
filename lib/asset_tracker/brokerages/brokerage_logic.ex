@@ -4,7 +4,7 @@ defmodule AssetTracker.Brokerages.BrokerageLogic do
   import Ecto.Query, warn: false
   alias AssetTracker.Repo
 
-  alias AssetTracker.Brokerages.Schema.Brokerage
+  alias AssetTracker.Brokerages.Brokerage
 
   @doc """
   Returns the list of brokerage.
