@@ -1,16 +1,15 @@
 defmodule AssetTracker.BrokeragesFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `AssetTracker.Brokerages` context.
-  """
+  @moduledoc false
 
-  @doc """
-  Generate a brokerage.
-  """
+  import AssetTracker.AccountsFixtures
+
   def brokerage_fixture(attrs \\ %{}) do
+    user = user_fixture()
+
     {:ok, brokerage} =
       attrs
       |> Enum.into(%{
+        user_id: user.id,
         name: "some name"
       })
       |> AssetTracker.Brokerages.create_brokerage()
