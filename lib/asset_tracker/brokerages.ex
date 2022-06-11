@@ -6,7 +6,7 @@ defmodule AssetTracker.Brokerages do
 
   alias AssetTracker.Brokerages.Brokerage
 
-  def list_brokerage do
+  def list_brokerages do
     Repo.all(Brokerage)
   end
 
