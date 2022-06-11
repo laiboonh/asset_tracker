@@ -10,9 +10,9 @@ defmodule AssetTracker.BrokeragesTest do
   describe "brokerages" do
     @invalid_attrs %{name: nil}
 
-    test "list_brokerage/0 returns all brokerage" do
+    test "list_brokerages/0 returns all brokerage" do
       brokerage = brokerage_fixture()
-      assert Brokerages.list_brokerage() == [brokerage]
+      assert Brokerages.list_brokerages() == [brokerage]
     end
 
     test "get_brokerage!/1 returns the brokerage with given id" do
