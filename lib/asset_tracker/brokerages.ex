@@ -1,17 +1,26 @@
 defmodule AssetTracker.Brokerages do
   @moduledoc false
-  alias AssetTracker.Brokerages.BrokerageLogic
-  defdelegate list_brokerage, to: BrokerageLogic
 
-  defdelegate get_brokerage!(id), to: BrokerageLogic
+  import Ecto.Query, warn: false
+  alias AssetTracker.Repo
 
-  defdelegate create_brokerage(attrs \\ %{}), to: BrokerageLogic
+  alias AssetTracker.Brokerages.Brokerage
 
-  defdelegate update_brokerage(brokerage, attrs),
-    to: BrokerageLogic
+  def list_brokerage do
+    Repo.all(Brokerage)
+  end
 
-  defdelegate delete_brokerage(brokerage), to: BrokerageLogic
+  def get_brokerage!(id), do: Repo.get!(Brokerage, id)
 
-  defdelegate change_brokerage(brokerage, attrs \\ %{}),
-    to: BrokerageLogic
+  def create_brokerage(attrs \\ %{}) do
+    %Brokerage{}
+    |> Brokerage.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_brokerage(%Brokerage{} = brokerage, attrs) do
+    brokerage
+    |> Brokerage.changeset(attrs)
+    |> Repo.update()
+  end
 end

@@ -4,18 +4,17 @@ defmodule AssetTracker.Brokerages.Brokerage do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-
-  schema "brokerage" do
+  schema "brokerages" do
     field :name, :string
+    belongs_to :user, AssetTracker.Accounts.User
 
-    timestamps(type: :utc_datetime_usec)
+    timestamps()
   end
 
   @doc false
   def changeset(brokerage, attrs) do
     brokerage
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :user_id])
+    |> validate_required([:name, :user_id])
   end
 end
