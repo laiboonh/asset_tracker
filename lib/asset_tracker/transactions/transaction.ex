@@ -4,6 +4,8 @@ defmodule AssetTracker.Transactions.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias AssetTracker.Transactions.Action
+
   schema "transactions" do
     belongs_to :brokerage, AssetTracker.Brokerages.Brokerage
     belongs_to :user, AssetTracker.Accounts.User
@@ -25,7 +27,7 @@ defmodule AssetTracker.Transactions.Transaction do
     |> cast(attrs, [:user_id, :brokerage_id, :transacted_at])
     |> cast_assoc(:actions,
       required: true,
-      with: &AssetTracker.Transactions.Action.create_changeset/2
+      with: &Action.create_changeset/2
     )
     |> validate_required([:user_id, :brokerage_id, :transacted_at])
   end
