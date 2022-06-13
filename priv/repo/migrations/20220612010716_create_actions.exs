@@ -3,9 +3,9 @@ defmodule AssetTracker.Repo.Migrations.CreateActions do
 
   def change do
     create table(:actions) do
-      add :transaction_id, references(:transactions)
-      add :asset_id, references(:assets)
-      add :units, :float
+      add :transaction_id, references(:transactions), null: false
+      add :asset_id, references(:assets), null: false
+      add :units, :float, null: false
       timestamps()
     end
   end
