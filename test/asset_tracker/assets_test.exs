@@ -23,10 +23,16 @@ defmodule AssetTracker.AssetsTest do
     test "create_asset/1 with valid data creates a asset" do
       brokerage = brokerage_fixture() |> AssetTracker.Repo.preload(:user)
 
-      valid_attrs = %{name: "some name", user_id: brokerage.user.id, brokerage_id: brokerage.id}
+      valid_attrs = %{
+        name: "some name",
+        units: 10.0,
+        user_id: brokerage.user.id,
+        brokerage_id: brokerage.id
+      }
 
       assert {:ok, %Asset{} = asset} = Assets.create_asset(valid_attrs)
       assert asset.name == "some name"
+      assert asset.units == 10.0
     end
 
     test "create_asset/1 with invalid data returns error changeset" do

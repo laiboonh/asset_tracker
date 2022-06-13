@@ -1,12 +1,11 @@
-defmodule AssetTracker.Repo.Migrations.CreateAssets do
+defmodule AssetTracker.Repo.Migrations.CreateTransactions do
   use Ecto.Migration
 
   def change do
-    create table(:assets) do
-      add :name, :string, null: false
-      add :units, :float, null: false
+    create table(:transactions) do
       add :user_id, references(:users), null: false
       add :brokerage_id, references(:brokerages), null: false
+      add :transacted_at, :date, null: false
       timestamps()
     end
   end

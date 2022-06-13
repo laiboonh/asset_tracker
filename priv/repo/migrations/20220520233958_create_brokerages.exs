@@ -3,8 +3,8 @@ defmodule AssetTracker.Repo.Migrations.CreateBrokerage do
 
   def change do
     create table(:brokerages) do
-      add :name, :string
-      add :user_id, references(:users)
+      add :name, :string, null: false
+      add :user_id, references(:users), null: false
       timestamps()
     end
   end
