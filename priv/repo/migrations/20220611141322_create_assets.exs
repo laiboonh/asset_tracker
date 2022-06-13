@@ -3,9 +3,10 @@ defmodule AssetTracker.Repo.Migrations.CreateAssets do
 
   def change do
     create table(:assets) do
-      add :name, :string
-      add :user_id, references(:users)
-      add :brokerage_id, references(:brokerages)
+      add :name, :string, null: false
+      add :float, :float, null: false
+      add :user_id, references(:users), null: false
+      add :brokerage_id, references(:brokerages), null: false
       timestamps()
     end
   end

@@ -11,7 +11,8 @@ defmodule AssetTracker.AssetsFixtures do
       |> Enum.into(%{
         user_id: brokerage.user.id,
         brokerage_id: brokerage.id,
-        name: "some name"
+        name: "some name",
+        units: 10.0
       })
       |> AssetTracker.Assets.create_asset()
 
