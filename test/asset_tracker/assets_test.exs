@@ -55,5 +55,15 @@ defmodule AssetTracker.AssetsTest do
 
       assert asset == Assets.get_asset!(asset.id)
     end
+
+    test "update_units/2 with valid data increments/decrements the asset's unit" do
+      asset = asset_fixture()
+
+      assert {_num_rows_updated, _select_result} = Assets.update_units(asset.id, 1.23)
+
+      assert {_num_rows_updated, [updated_units]} = Assets.update_units(asset.id, -1.23)
+
+      assert updated_units === 10.0
+    end
   end
 end

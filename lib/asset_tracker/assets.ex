@@ -25,4 +25,12 @@ defmodule AssetTracker.Assets do
     |> Asset.changeset(attrs)
     |> Repo.update()
   end
+
+  def update_units(id, units) do
+    Asset
+    |> update([a], inc: [units: ^units])
+    |> where([a], a.id == ^id)
+    |> select([a], a.units)
+    |> Repo.update_all([])
+  end
 end
