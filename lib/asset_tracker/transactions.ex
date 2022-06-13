@@ -10,6 +10,10 @@ defmodule AssetTracker.Transactions do
     Repo.all(Transaction) |> Repo.preload(:actions)
   end
 
+  def list_actions do
+    Repo.all(Action)
+  end
+
   def get_transaction!(id), do: Repo.get!(Transaction, id) |> Repo.preload(:actions)
 
   def create_transaction(attrs \\ %{}) do
@@ -19,7 +23,8 @@ defmodule AssetTracker.Transactions do
   end
 
   @spec create_transaction_update_assets(map()) ::
-          {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
+          {:ok, any()}
+          | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
   def create_transaction_update_assets(attrs \\ %{}) do
     Ecto.Multi.new()
     |> Ecto.Multi.run(:create_transaction, fn _repo, %{} ->
@@ -33,6 +38,35 @@ defmodule AssetTracker.Transactions do
         end)
 
       {:ok, results}
+    end)
+    |> Repo.transaction()
+  end
+
+  @spec delete_transaction(struct()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def delete_transaction(%Transaction{} = transaction) do
+    transaction
+    |> Transaction.changeset(%{})
+    |> Repo.delete()
+  end
+
+  @spec delete_transaction_and_update_assets(non_neg_integer()) ::
+          {:ok, any()}
+          | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
+  def delete_transaction_and_update_assets(id) do
+    transaction = get_transaction!(id)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.run(:update_assets, fn _repo, %{} ->
+      results =
+        Enum.map(transaction.actions, fn action ->
+          %Action{asset: asset, units: units} = action |> Repo.preload(:asset)
+          {1, _select_result} = AssetTracker.Assets.update_units(asset.id, units * -1)
+        end)
+
+      {:ok, results}
+    end)
+    |> Ecto.Multi.run(:delete_transaction, fn _repo, %{} ->
+      delete_transaction(transaction)
     end)
     |> Repo.transaction()
   end

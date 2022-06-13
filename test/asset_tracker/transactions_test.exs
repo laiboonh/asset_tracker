@@ -15,6 +15,11 @@ defmodule AssetTracker.TransactionsTest do
       assert Transactions.list_transactions() == [transaction]
     end
 
+    test "list_actions/0 returns all action" do
+      transaction = transaction_fixture()
+      assert Transactions.list_actions() == transaction.actions
+    end
+
     test "get_transaction!/1 returns the transaction with given id" do
       transaction = transaction_fixture()
       assert Transactions.get_transaction!(transaction.id) == transaction
@@ -87,6 +92,52 @@ defmodule AssetTracker.TransactionsTest do
                Transactions.update_transaction(transaction, @invalid_attrs)
 
       assert transaction == Transactions.get_transaction!(transaction.id)
+    end
+
+    test "delete_transaction/1 with valid data returns ok tuple" do
+      transaction = transaction_fixture()
+
+      assert AssetTracker.Transactions.list_actions() |> length() == 1
+
+      {:ok, _transaction} = AssetTracker.Transactions.delete_transaction(transaction)
+
+      assert AssetTracker.Transactions.list_actions() |> length() == 0
+    end
+
+    test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do
+      asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      valid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: 5.0
+          }
+        ]
+      }
+
+      assert {:ok, results} = Transactions.create_transaction_update_assets(valid_attrs)
+
+      %Transaction{} = transaction = results.create_transaction
+
+      assert length(transaction.actions) == 1
+
+      asset = AssetTracker.Assets.get_asset!(asset.id)
+
+      assert asset.units == 15.0
+
+      assert {:ok, _results} = Transactions.delete_transaction_and_update_assets(transaction.id)
+
+      asset = AssetTracker.Assets.get_asset!(asset.id)
+
+      assert asset.units == 10.0
+
+      assert_raise Ecto.NoResultsError, fn ->
+        AssetTracker.Transactions.get_transaction!(transaction.id)
+      end
     end
   end
 end
