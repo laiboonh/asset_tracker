@@ -26,6 +26,7 @@ defmodule AssetTracker.Assets do
     |> Repo.update()
   end
 
+  @spec update_units(non_neg_integer(), float()) :: {non_neg_integer(), nil | [term()]}
   def update_units(id, units) do
     Asset
     |> update([a], inc: [units: ^units])
