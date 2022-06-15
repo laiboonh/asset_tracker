@@ -59,7 +59,8 @@ defmodule AssetTracker.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:elixir_auth_google, "~> 1.6.3"},
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:mimic, "~> 1.7", only: :test}
     ]
   end
 

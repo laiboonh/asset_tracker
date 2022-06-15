@@ -49,5 +49,16 @@ defmodule AssetTracker.BrokeragesTest do
 
       assert brokerage == Brokerages.get_brokerage!(brokerage.id)
     end
+
+    test "delete_brokerage/1 with valid data deletes the brokerage" do
+      brokerage = brokerage_fixture()
+      assert {:ok, %Brokerage{}} = Brokerages.delete_brokerage(brokerage)
+      assert_raise Ecto.NoResultsError, fn -> Brokerages.get_brokerage!(brokerage.id) end
+    end
+
+    test "change_brokerage/1 returns a test changeset" do
+      brokerage = brokerage_fixture()
+      assert %Ecto.Changeset{} = Brokerages.change_brokerage(brokerage)
+    end
   end
 end

@@ -21,6 +21,13 @@ defmodule AssetTrackerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/brokerages", BrokerageLive.Index, :index
+    live "/brokerages/new", BrokerageLive.Index, :new
+    live "/brokerages/:id/edit", BrokerageLive.Index, :edit
+
+    live "/brokerages/:id", BrokerageLive.Show, :show
+    live "/brokerages/:id/show/edit", BrokerageLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
