@@ -12,9 +12,9 @@ defmodule AssetTracker.Brokerages.Brokerage do
   end
 
   @doc false
-  def changeset(brokerage, attrs) do
+  def changeset(brokerage, params) do
     brokerage
-    |> cast(attrs, [:name, :user_id])
+    |> cast(params, [:name, :user_id])
     |> validate_required([:name, :user_id])
   end
 end

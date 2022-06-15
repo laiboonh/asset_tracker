@@ -23,4 +23,12 @@ defmodule AssetTracker.Brokerages do
     |> Brokerage.changeset(attrs)
     |> Repo.update()
   end
+
+  def delete_brokerage(%Brokerage{} = brokerage) do
+    brokerage
+    |> Repo.delete()
+  end
+
+  def change_brokerage(%Brokerage{} = brokerage, params \\ %{}),
+    do: Brokerage.changeset(brokerage, params)
 end
