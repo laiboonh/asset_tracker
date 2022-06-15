@@ -1,4 +1,6 @@
 defmodule AssetTrackerWeb.BrokerageLive.FormComponent do
+  @moduledoc false
+
   use AssetTrackerWeb, :live_component
 
   alias AssetTracker.Brokerages

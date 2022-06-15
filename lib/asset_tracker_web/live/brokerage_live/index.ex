@@ -1,4 +1,6 @@
 defmodule AssetTrackerWeb.BrokerageLive.Index do
+  @moduledoc false
+
   use AssetTrackerWeb, :live_view
 
   alias AssetTracker.Brokerages
