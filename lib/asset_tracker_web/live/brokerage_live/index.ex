@@ -5,8 +5,9 @@ defmodule AssetTrackerWeb.BrokerageLive.Index do
   alias AssetTracker.Brokerages.Brokerage
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket |> assign(:brokerages, list_brokerages())}
+  def mount(_params, %{"user_token" => user_token}, socket) do
+    user = AssetTracker.Accounts.get_user_by_session_token(user_token)
+    {:ok, socket |> assign(:brokerages, list_brokerages()) |> assign(:user_id, user.id)}
   end
 
   @impl true
@@ -21,14 +22,10 @@ defmodule AssetTrackerWeb.BrokerageLive.Index do
   end
 
   defp apply_action(socket, :new, _params) do
-    IO.inspect(socket)
-    # user = AssetTracker.Accounts.get_user_by_session_token(user_token)
-    # IO.inspect(user)
-
     socket
     |> assign(:page_title, "New Brokerage")
     |> assign(:brokerage, %Brokerage{})
-    |> assign(:user_id, 1)
+    |> assign(:user_id, socket.assigns.user_id)
   end
 
   defp apply_action(socket, :index, _params) do

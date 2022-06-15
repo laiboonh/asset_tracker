@@ -24,8 +24,11 @@ defmodule AssetTrackerWeb.BrokerageLive.FormComponent do
   end
 
   def handle_event("save", %{"brokerage" => brokerage_params}, socket) do
-    IO.puts("inside save #{inspect(socket)}")
-    save_brokerage(socket, socket.assigns.action, brokerage_params)
+    save_brokerage(
+      socket,
+      socket.assigns.action,
+      brokerage_params |> Map.put("user_id", socket.assigns.user_id)
+    )
   end
 
   defp save_brokerage(socket, :edit, brokerage_params) do
