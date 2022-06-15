@@ -9,7 +9,7 @@ defmodule AssetTracker.Transactions.Transaction do
   schema "transactions" do
     belongs_to :brokerage, AssetTracker.Brokerages.Brokerage
     belongs_to :user, AssetTracker.Accounts.User
-    has_many :actions, AssetTracker.Transactions.Action
+    has_many :actions, AssetTracker.Transactions.Action, on_delete: :delete_all
     field :transacted_at, :date
     timestamps()
   end
