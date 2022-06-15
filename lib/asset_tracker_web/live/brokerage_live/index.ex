@@ -3,11 +3,14 @@ defmodule AssetTrackerWeb.BrokerageLive.Index do
 
   alias AssetTracker.Brokerages
   alias AssetTracker.Brokerages.Brokerage
+  alias AssetTrackerWeb.Utils
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
-    user = AssetTracker.Accounts.get_user_by_session_token(user_token)
-    {:ok, socket |> assign(:brokerages, list_brokerages()) |> assign(:user_id, user.id)}
+  def mount(_params, session, socket) do
+    {:ok,
+     socket
+     |> assign(:brokerages, list_brokerages())
+     |> assign(:user_id, Utils.get_user_id(session))}
   end
 
   @impl true

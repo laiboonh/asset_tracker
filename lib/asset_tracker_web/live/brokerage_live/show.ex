@@ -2,10 +2,11 @@ defmodule AssetTrackerWeb.BrokerageLive.Show do
   use AssetTrackerWeb, :live_view
 
   alias AssetTracker.Brokerages
+  alias AssetTrackerWeb.Utils
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(_params, session, socket) do
+    {:ok, socket |> assign(:user_id, Utils.get_user_id(session))}
   end
 
   @impl true

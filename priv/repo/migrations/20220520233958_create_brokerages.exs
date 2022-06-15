@@ -7,5 +7,7 @@ defmodule AssetTracker.Repo.Migrations.CreateBrokerage do
       add :user_id, references(:users), null: false
       timestamps()
     end
+
+    create unique_index(:brokerages, [:name])
   end
 end
