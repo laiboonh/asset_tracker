@@ -1,0 +1,56 @@
+<div>
+  <h2><%= @title %></h2>
+
+  <.form
+    let={f}
+    for={@changeset}
+    id="transaction-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <%= label(f, :transacted_at) %>
+    <%= date_select(f, :transacted_at) %>
+    <%= error_tag(f, :transacted_at) %>
+
+    <%= label(f, :brokerage_id) %>
+    <%= select(f, :brokerage_id, @brokerages) %>
+    <%= error_tag(f, :brokerage_id) %>
+
+    <%= label(f, :actions) %>
+
+    <a href="#" phx-target={@myself} phx-click="add-action">Add an action</a>
+    <%= inputs_for f, :actions, fn a -> %>
+      <div>
+        <%= label(a, :units) %>
+        <%= text_input(a, :units) %>
+        <%= error_tag(a, :units) %>
+
+        <%= label(a, :asset_id) %>
+        <%= select(a, :asset_id, @assets) %>
+        <%= error_tag(a, :asset_id) %>
+
+        <br />
+        <%= if is_nil(a.data.temp_id) do %>
+          <%= checkbox(a, :delete) %>
+        <% else %>
+          <%= hidden_input(a, :temp_id) %>
+          <a
+            href="#"
+            phx-target={@myself}
+            phx-click="remove-action"
+            phx-value-remove={a.data.temp_id}
+          >
+            <%= label(a, :delete) %>
+          </a>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= error_tag(f, :actions) %>
+
+    <div>
+      <%= submit("Save", phx_disable_with: "Saving...") %>
+    </div>
+  </.form>
+</div>

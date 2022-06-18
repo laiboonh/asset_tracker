@@ -7,7 +7,8 @@ defmodule AssetTracker.Transactions do
   alias AssetTracker.Transactions.{Action, Transaction}
 
   def list_transactions do
-    Repo.all(Transaction) |> Repo.preload(:actions)
+    Repo.all(Transaction)
+    |> Repo.preload(actions: [:asset], brokerage: [])
   end
 
   def list_actions do
@@ -43,7 +44,7 @@ defmodule AssetTracker.Transactions do
   end
 
   @spec delete_transaction(struct()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  def delete_transaction(%Transaction{} = transaction) do
+  defp delete_transaction(%Transaction{} = transaction) do
     transaction
     |> Transaction.changeset(%{})
     |> Repo.delete()
@@ -76,4 +77,10 @@ defmodule AssetTracker.Transactions do
     |> Transaction.changeset(attrs)
     |> Repo.update()
   end
+
+  def change_transaction(%Transaction{} = transaction, params \\ %{}),
+    do: Transaction.create_changeset(transaction, params)
+
+  def change_action(%Action{} = action, params \\ %{}),
+    do: Action.create_changeset(action, params)
 end

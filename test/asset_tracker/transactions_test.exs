@@ -11,7 +11,7 @@ defmodule AssetTracker.TransactionsTest do
     @invalid_attrs %{transacted_at: nil}
 
     test "list_transactions/0 returns all transaction" do
-      transaction = transaction_fixture()
+      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
       assert Transactions.list_transactions() == [transaction]
     end
 
@@ -92,16 +92,6 @@ defmodule AssetTracker.TransactionsTest do
                Transactions.update_transaction(transaction, @invalid_attrs)
 
       assert transaction == Transactions.get_transaction!(transaction.id)
-    end
-
-    test "delete_transaction/1 with valid data returns ok tuple" do
-      transaction = transaction_fixture()
-
-      assert AssetTracker.Transactions.list_actions() |> length() == 1
-
-      {:ok, _transaction} = AssetTracker.Transactions.delete_transaction(transaction)
-
-      assert AssetTracker.Transactions.list_actions() |> length() == 0
     end
 
     test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do
