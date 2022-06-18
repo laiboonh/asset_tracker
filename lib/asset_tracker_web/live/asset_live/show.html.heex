@@ -16,15 +16,16 @@
 <% end %>
 
 <ul>
-
   <li>
     <strong>Name:</strong>
     <%= @asset.name %>
   </li>
-
-  
-
+  <li>
+    <strong>Brokerage Name:</strong>
+    <%= @asset.brokerage.name %>
+  </li>
 </ul>
 
-<span><%= live_patch "Edit", to: Routes.asset_show_path(@socket, :edit, @asset), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.asset_index_path(@socket, :index) %></span>
+<span>
+  <%= live_patch("Edit", to: Routes.asset_show_path(@socket, :edit, @asset), class: "button") %>
+</span> | <span><%= live_redirect("Back", to: Routes.asset_index_path(@socket, :index)) %></span>

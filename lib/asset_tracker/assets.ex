@@ -7,12 +7,12 @@ defmodule AssetTracker.Assets do
   alias AssetTracker.Assets.Asset
 
   def list_assets do
-    Repo.all(Asset)
+    Repo.all(Asset) |> Repo.preload(:brokerage)
   end
 
-  def get_asset!(id), do: Repo.get!(Asset, id)
+  def get_asset!(id), do: Repo.get!(Asset, id) |> Repo.preload(:brokerage)
 
-  def get_asset(id), do: Repo.get(Asset, id)
+  def get_asset(id), do: Repo.get(Asset, id) |> Repo.preload(:brokerage)
 
   def create_asset(attrs \\ %{}) do
     %Asset{}
