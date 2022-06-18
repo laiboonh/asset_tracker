@@ -34,4 +34,12 @@ defmodule AssetTracker.Assets do
     |> select([a], a.units)
     |> Repo.update_all([])
   end
+
+  def delete_asset(%Asset{} = asset) do
+    asset
+    |> Repo.delete()
+  end
+
+  def change_asset(%Asset{} = asset, params \\ %{}),
+    do: Asset.changeset(asset, params)
 end

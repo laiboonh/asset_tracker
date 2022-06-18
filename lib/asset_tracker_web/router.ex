@@ -87,6 +87,13 @@ defmodule AssetTrackerWeb.Router do
 
     live "/brokerages/:id", BrokerageLive.Show, :show
     live "/brokerages/:id/show/edit", BrokerageLive.Show, :edit
+
+    live "/assets", AssetLive.Index, :index
+    live "/assets/new", AssetLive.Index, :new
+    live "/assets/:id/edit", AssetLive.Index, :edit
+
+    live "/assets/:id", AssetLive.Show, :show
+    live "/assets/:id/show/edit", AssetLive.Show, :edit
   end
 
   scope "/", AssetTrackerWeb do
