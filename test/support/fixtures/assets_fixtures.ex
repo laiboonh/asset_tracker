@@ -16,6 +16,6 @@ defmodule AssetTracker.AssetsFixtures do
       })
       |> AssetTracker.Assets.create_asset()
 
-    asset
+    asset |> AssetTracker.Repo.preload(:brokerage)
   end
 end
