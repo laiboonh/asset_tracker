@@ -53,7 +53,7 @@ defmodule AssetTrackerWeb.AssetLive.Index do
     Assets.list_assets()
   end
 
-  defp brokerages() do
+  defp brokerages do
     Enum.map(AssetTracker.Brokerages.list_brokerages(), fn brokerage ->
       [key: brokerage.name, value: brokerage.id]
     end)
