@@ -21,13 +21,6 @@ defmodule AssetTrackerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-
-    live "/brokerages", BrokerageLive.Index, :index
-    live "/brokerages/new", BrokerageLive.Index, :new
-    live "/brokerages/:id/edit", BrokerageLive.Index, :edit
-
-    live "/brokerages/:id", BrokerageLive.Show, :show
-    live "/brokerages/:id/show/edit", BrokerageLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
@@ -87,6 +80,20 @@ defmodule AssetTrackerWeb.Router do
     get "/users/settings", UserSettingsController, :edit
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
+
+    live "/brokerages", BrokerageLive.Index, :index
+    live "/brokerages/new", BrokerageLive.Index, :new
+    live "/brokerages/:id/edit", BrokerageLive.Index, :edit
+
+    live "/brokerages/:id", BrokerageLive.Show, :show
+    live "/brokerages/:id/show/edit", BrokerageLive.Show, :edit
+
+    live "/assets", AssetLive.Index, :index
+    live "/assets/new", AssetLive.Index, :new
+    live "/assets/:id/edit", AssetLive.Index, :edit
+
+    live "/assets/:id", AssetLive.Show, :show
+    live "/assets/:id/show/edit", AssetLive.Show, :edit
   end
 
   scope "/", AssetTrackerWeb do
