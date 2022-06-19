@@ -25,7 +25,9 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
       |> Transactions.change_transaction(transaction_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset) |> update_assets_in_assigns()}
+    {:noreply,
+     assign(socket, :changeset, changeset)
+     |> update_assets_in_assigns(changeset.changes.brokerage_id)}
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
@@ -37,7 +39,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     )
   end
 
-  def handle_event("add-action", _, socket) do
+  def handle_event("add-action", _params, socket) do
     existing_actions =
       Map.get(socket.assigns.changeset.changes, :actions, socket.assigns.transaction.actions)
 
@@ -48,11 +50,13 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
         Transactions.change_action(%Action{temp_id: get_temp_id()})
       ])
 
-    changeset =
-      socket.assigns.changeset
-      |> Ecto.Changeset.put_assoc(:actions, actions)
+    changeset = socket.assigns.changeset |> Ecto.Changeset.put_assoc(:actions, actions)
 
-    {:noreply, assign(socket, changeset: changeset)}
+    brokerage_id = maybe_get_brokerage_id_from_changeset(socket)
+
+    {:noreply,
+     assign(socket, changeset: changeset)
+     |> update_assets_in_assigns(brokerage_id)}
   end
 
   def handle_event("remove-action", %{"remove" => remove_id}, socket) do
@@ -97,10 +101,14 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
   defp get_temp_id, do: :crypto.strong_rand_bytes(5) |> Base.url_encode64() |> binary_part(0, 5)
 
-  defp update_assets_in_assigns(socket) do
-    brokerage_id = socket.assigns.changeset.changes.brokerage_id
-
-    assign(socket, :assets, assets(brokerage_id))
+  defp update_assets_in_assigns(socket, brokerage_id) do
+    assign(
+      socket,
+      :assets,
+      Enum.map(AssetTracker.Assets.list_assets_by_brokerage(brokerage_id), fn asset ->
+        [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
+      end)
+    )
   end
 
   defp maybe_format_actions_param(transaction_params) do
@@ -113,9 +121,14 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     end
   end
 
-  defp assets(brokerage_id) do
-    Enum.map(AssetTracker.Assets.list_assets_by_brokerage(brokerage_id), fn asset ->
-      [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
-    end)
+  # If user adds in action without making any changes (validate not triggered)
+  # We will not change brokerage_id info in changeset
+  # Hence we simply use the head of brokerages list as default
+  defp maybe_get_brokerage_id_from_changeset(socket) do
+    Map.get(
+      socket.assigns.changeset.changes,
+      :brokerage_id,
+      hd(socket.assigns.brokerages) |> Keyword.get(:value)
+    )
   end
 end
