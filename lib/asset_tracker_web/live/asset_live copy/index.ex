@@ -29,7 +29,10 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Transaction")
-    |> assign(:transaction, %Transaction{actions: []})
+    |> assign(:transaction, %Transaction{
+      actions: [],
+      transacted_at: Date.utc_today()
+    })
     |> assign(:user_id, socket.assigns.user_id)
     |> assign(:brokerages, brokerages())
   end
