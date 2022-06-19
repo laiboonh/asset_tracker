@@ -11,7 +11,7 @@ defmodule AssetTracker.TransactionsTest do
     @invalid_attrs %{transacted_at: nil}
 
     test "list_transactions/0 returns all transaction" do
-      transaction = transaction_fixture()
+      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
       assert Transactions.list_transactions() == [transaction]
     end
 
@@ -21,7 +21,7 @@ defmodule AssetTracker.TransactionsTest do
     end
 
     test "get_transaction!/1 returns the transaction with given id" do
-      transaction = transaction_fixture()
+      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
       assert Transactions.get_transaction!(transaction.id) == transaction
     end
 
@@ -72,36 +72,6 @@ defmodule AssetTracker.TransactionsTest do
 
     test "create_transaction/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Transactions.create_transaction(@invalid_attrs)
-    end
-
-    test "update_transaction/2 with valid data updates the transaction" do
-      transaction = transaction_fixture()
-      today = Date.utc_today()
-      update_attrs = %{transacted_at: today}
-
-      assert {:ok, %Transaction{} = transaction} =
-               Transactions.update_transaction(transaction, update_attrs)
-
-      assert transaction.transacted_at == today
-    end
-
-    test "update_transaction/2 with invalid data returns error changeset" do
-      transaction = transaction_fixture()
-
-      assert {:error, %Ecto.Changeset{}} =
-               Transactions.update_transaction(transaction, @invalid_attrs)
-
-      assert transaction == Transactions.get_transaction!(transaction.id)
-    end
-
-    test "delete_transaction/1 with valid data returns ok tuple" do
-      transaction = transaction_fixture()
-
-      assert AssetTracker.Transactions.list_actions() |> length() == 1
-
-      {:ok, _transaction} = AssetTracker.Transactions.delete_transaction(transaction)
-
-      assert AssetTracker.Transactions.list_actions() |> length() == 0
     end
 
     test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do

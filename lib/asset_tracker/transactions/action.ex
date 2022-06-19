@@ -9,6 +9,10 @@ defmodule AssetTracker.Transactions.Action do
     belongs_to :asset, AssetTracker.Assets.Asset
     field :units, :float
     timestamps()
+
+    # Virtual
+    field :temp_id, :string, virtual: true
+    field :delete, :boolean, virtual: true
   end
 
   @doc false
@@ -20,7 +24,8 @@ defmodule AssetTracker.Transactions.Action do
 
   def create_changeset(action, attrs) do
     action
-    |> cast(attrs, [:transaction_id, :asset_id, :units])
+    |> Map.put(:temp_id, action.temp_id || attrs["temp_id"])
+    |> cast(attrs, [:asset_id, :units])
     |> validate_required([:asset_id, :units])
   end
 end

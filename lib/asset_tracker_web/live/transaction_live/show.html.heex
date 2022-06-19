@@ -1,0 +1,30 @@
+<h1>Show Transaction</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.transaction_show_path(@socket, :show, @transaction)}>
+    <.live_component
+      module={AssetTrackerWeb.TransactionLive.FormComponent}
+      id={@transaction.id}
+      title={@page_title}
+      action={@live_action}
+      transaction={@transaction}
+      user_id={@user_id}
+      brokerages={@brokerages}
+      assets={@assets}
+      return_to={Routes.transaction_show_path(@socket, :show, @transaction)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+  <li>
+    <strong>Transacted At:</strong>
+    <%= @transaction.transacted_at %>
+  </li>
+  <li>
+    <strong>Brokerage Name:</strong>
+    <%= @transaction.brokerage.name %>
+  </li>
+</ul>
+
+<span><%= live_redirect("Back", to: Routes.transaction_index_path(@socket, :index)) %></span>

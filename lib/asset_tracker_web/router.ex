@@ -81,6 +81,7 @@ defmodule AssetTrackerWeb.Router do
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
+    # Brokerages
     live "/brokerages", BrokerageLive.Index, :index
     live "/brokerages/new", BrokerageLive.Index, :new
     live "/brokerages/:id/edit", BrokerageLive.Index, :edit
@@ -88,12 +89,19 @@ defmodule AssetTrackerWeb.Router do
     live "/brokerages/:id", BrokerageLive.Show, :show
     live "/brokerages/:id/show/edit", BrokerageLive.Show, :edit
 
+    # Assets
     live "/assets", AssetLive.Index, :index
     live "/assets/new", AssetLive.Index, :new
     live "/assets/:id/edit", AssetLive.Index, :edit
 
     live "/assets/:id", AssetLive.Show, :show
     live "/assets/:id/show/edit", AssetLive.Show, :edit
+
+    # Transactions
+    live "/transactions", TransactionLive.Index, :index
+    live "/transactions/new", TransactionLive.Index, :new
+
+    live "/transactions/:id", TransactionLive.Show, :show
   end
 
   scope "/", AssetTrackerWeb do

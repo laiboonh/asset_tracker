@@ -4,14 +4,15 @@ defmodule AssetTracker.AssetsFixtures do
   import AssetTracker.BrokeragesFixtures
 
   def asset_fixture(attrs \\ %{}) do
-    brokerage = brokerage_fixture() |> AssetTracker.Repo.preload(:user)
+    brokerage =
+      (Map.get(attrs, :brokerage) || brokerage_fixture()) |> AssetTracker.Repo.preload(:user)
 
     {:ok, asset} =
       attrs
       |> Enum.into(%{
         user_id: brokerage.user.id,
         brokerage_id: brokerage.id,
-        name: "some name",
+        name: Map.get(attrs, :name) || "some name",
         units: 10.0
       })
       |> AssetTracker.Assets.create_asset()

@@ -10,6 +10,13 @@ defmodule AssetTracker.Assets do
     Repo.all(Asset) |> Repo.preload(:brokerage)
   end
 
+  def list_assets_by_brokerage(brokerage_id) do
+    from(Asset)
+    |> where([a], a.brokerage_id == ^brokerage_id)
+    |> Repo.all()
+    |> Repo.preload(:brokerage)
+  end
+
   def get_asset!(id), do: Repo.get!(Asset, id) |> Repo.preload(:brokerage)
 
   def get_asset(id), do: Repo.get(Asset, id) |> Repo.preload(:brokerage)
