@@ -18,8 +18,8 @@
 
 <ul>
   <li>
-    <strong>Name:</strong>
-    <%= @transaction.name %>
+    <strong>Transacted At:</strong>
+    <%= @transaction.transacted_at %>
   </li>
   <li>
     <strong>Brokerage Name:</strong>
@@ -27,10 +27,4 @@
   </li>
 </ul>
 
-<span>
-  <%= live_patch("Edit",
-    to: Routes.transaction_show_path(@socket, :edit, @transaction),
-    class: "button"
-  ) %>
-</span>
-| <span><%= live_redirect("Back", to: Routes.transaction_index_path(@socket, :index)) %></span>
+<span><%= live_redirect("Back", to: Routes.transaction_index_path(@socket, :index)) %></span>

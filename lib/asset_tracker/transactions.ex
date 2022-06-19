@@ -15,7 +15,8 @@ defmodule AssetTracker.Transactions do
     Repo.all(Action)
   end
 
-  def get_transaction!(id), do: Repo.get!(Transaction, id) |> Repo.preload(:actions)
+  def get_transaction!(id),
+    do: Repo.get!(Transaction, id) |> Repo.preload(actions: [:asset], brokerage: [])
 
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
