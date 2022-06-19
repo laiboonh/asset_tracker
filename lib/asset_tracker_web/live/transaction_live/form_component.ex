@@ -73,15 +73,18 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
   end
 
   defp save_transaction(socket, :new, transaction_params) do
-    case Transactions.create_transaction(transaction_params) do
+    case Transactions.create_transaction_update_assets(transaction_params) do
       {:ok, _transaction} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Asset created successfully")
+         |> put_flash(:info, "Transaction created successfully")
          |> push_redirect(to: socket.assigns.return_to)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+      {:error, failed_operation, _failed_value, _changes_so_far} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Fail to create transaction. Failed operation: #{failed_operation}")
+         |> push_redirect(to: socket.assigns.return_to)}
     end
   end
 
