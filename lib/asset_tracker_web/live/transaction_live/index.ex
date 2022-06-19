@@ -24,6 +24,7 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
     socket
     |> assign(:page_title, "Edit Transaction")
     |> assign(:transaction, Transactions.get_transaction!(id))
+    |> assign(:brokerages, brokerages())
   end
 
   defp apply_action(socket, :new, _params) do

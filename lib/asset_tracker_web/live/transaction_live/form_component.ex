@@ -13,7 +13,8 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign(:changeset, changeset)
+     |> update_assets_in_assigns()}
   end
 
   @impl true
@@ -27,7 +28,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
     {:noreply,
      assign(socket, :changeset, changeset)
-     |> update_assets_in_assigns(changeset.changes.brokerage_id)}
+     |> update_assets_in_assigns()}
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
@@ -52,11 +53,9 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_assoc(:actions, actions)
 
-    brokerage_id = maybe_get_brokerage_id_from_changeset(socket)
-
     {:noreply,
      assign(socket, changeset: changeset)
-     |> update_assets_in_assigns(brokerage_id)}
+     |> update_assets_in_assigns()}
   end
 
   def handle_event("remove-action", %{"remove" => remove_id}, socket) do
@@ -101,7 +100,24 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
   defp get_temp_id, do: :crypto.strong_rand_bytes(5) |> Base.url_encode64() |> binary_part(0, 5)
 
-  defp update_assets_in_assigns(socket, brokerage_id) do
+  defp update_assets_in_assigns(socket) do
+    brokerage_id =
+      case socket.assigns.action do
+        :edit ->
+          Map.get(
+            socket.assigns.changeset.changes,
+            :brokerage_id,
+            socket.assigns.transaction.brokerage_id
+          )
+
+        :new ->
+          Map.get(
+            socket.assigns.changeset.changes,
+            :brokerage_id,
+            hd(socket.assigns.brokerages) |> Keyword.get(:value)
+          )
+      end
+
     assign(
       socket,
       :assets,
@@ -119,16 +135,5 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     else
       transaction_params
     end
-  end
-
-  # If user adds in action without making any changes (validate not triggered)
-  # We will not change brokerage_id info in changeset
-  # Hence we simply use the head of brokerages list as default
-  defp maybe_get_brokerage_id_from_changeset(socket) do
-    Map.get(
-      socket.assigns.changeset.changes,
-      :brokerage_id,
-      hd(socket.assigns.brokerages) |> Keyword.get(:value)
-    )
   end
 end
