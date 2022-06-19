@@ -72,19 +72,6 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  defp save_transaction(socket, :edit, transaction_params) do
-    case Transactions.update_transaction(socket.assigns.transaction, transaction_params) do
-      {:ok, _transaction} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Asset updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
-    end
-  end
-
   defp save_transaction(socket, :new, transaction_params) do
     case Transactions.create_transaction(transaction_params) do
       {:ok, _transaction} ->
@@ -102,21 +89,11 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
   defp update_assets_in_assigns(socket) do
     brokerage_id =
-      case socket.assigns.action do
-        :edit ->
-          Map.get(
-            socket.assigns.changeset.changes,
-            :brokerage_id,
-            socket.assigns.transaction.brokerage_id
-          )
-
-        :new ->
-          Map.get(
-            socket.assigns.changeset.changes,
-            :brokerage_id,
-            hd(socket.assigns.brokerages) |> Keyword.get(:value)
-          )
-      end
+      Map.get(
+        socket.assigns.changeset.changes,
+        :brokerage_id,
+        hd(socket.assigns.brokerages) |> Keyword.get(:value)
+      )
 
     assign(
       socket,

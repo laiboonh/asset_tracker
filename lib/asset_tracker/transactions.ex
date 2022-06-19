@@ -73,12 +73,6 @@ defmodule AssetTracker.Transactions do
     |> Repo.transaction()
   end
 
-  def update_transaction(%Transaction{} = transaction, attrs) do
-    transaction
-    |> Transaction.changeset(attrs)
-    |> Repo.update()
-  end
-
   def change_transaction(%Transaction{} = transaction, params \\ %{}),
     do: Transaction.create_changeset(transaction, params)
 

@@ -74,26 +74,6 @@ defmodule AssetTracker.TransactionsTest do
       assert {:error, %Ecto.Changeset{}} = Transactions.create_transaction(@invalid_attrs)
     end
 
-    test "update_transaction/2 with valid data updates the transaction" do
-      transaction = transaction_fixture()
-      today = Date.utc_today()
-      update_attrs = %{transacted_at: today}
-
-      assert {:ok, %Transaction{} = transaction} =
-               Transactions.update_transaction(transaction, update_attrs)
-
-      assert transaction.transacted_at == today
-    end
-
-    test "update_transaction/2 with invalid data returns error changeset" do
-      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
-
-      assert {:error, %Ecto.Changeset{}} =
-               Transactions.update_transaction(transaction, @invalid_attrs)
-
-      assert transaction == Transactions.get_transaction!(transaction.id)
-    end
-
     test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do
       asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
 
