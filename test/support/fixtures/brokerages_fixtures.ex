@@ -10,7 +10,7 @@ defmodule AssetTracker.BrokeragesFixtures do
       attrs
       |> Enum.into(%{
         user_id: user.id,
-        name: Map.get(attrs, :name) || "some name"
+        name: "brokerage#{System.unique_integer()}"
       })
       |> AssetTracker.Brokerages.create_brokerage()
 

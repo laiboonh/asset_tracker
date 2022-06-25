@@ -17,11 +17,11 @@ defmodule AssetTrackerWeb.AssetLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:asset, Assets.get_asset!(id))
-     |> assign(:brokerages, brokerages())}
+     |> assign(:brokerages, brokerages(socket.assigns.user_id))}
   end
 
-  defp brokerages do
-    Enum.map(AssetTracker.Brokerages.list_brokerages(), fn brokerage ->
+  defp brokerages(user_id) do
+    Enum.map(AssetTracker.Brokerages.list_brokerages(user_id), fn brokerage ->
       [key: brokerage.name, value: brokerage.id]
     end)
   end

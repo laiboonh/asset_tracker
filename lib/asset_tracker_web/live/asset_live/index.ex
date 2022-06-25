@@ -24,7 +24,7 @@ defmodule AssetTrackerWeb.AssetLive.Index do
     socket
     |> assign(:page_title, "Edit Asset")
     |> assign(:asset, Assets.get_asset!(id))
-    |> assign(:brokerages, brokerages())
+    |> assign(:brokerages, brokerages(socket.assigns.user_id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -32,7 +32,7 @@ defmodule AssetTrackerWeb.AssetLive.Index do
     |> assign(:page_title, "New Asset")
     |> assign(:asset, %Asset{})
     |> assign(:user_id, socket.assigns.user_id)
-    |> assign(:brokerages, brokerages())
+    |> assign(:brokerages, brokerages(socket.assigns.user_id))
   end
 
   defp apply_action(socket, :index, _params) do
@@ -53,8 +53,8 @@ defmodule AssetTrackerWeb.AssetLive.Index do
     Assets.list_assets()
   end
 
-  defp brokerages do
-    Enum.map(AssetTracker.Brokerages.list_brokerages(), fn brokerage ->
+  defp brokerages(user_id) do
+    Enum.map(AssetTracker.Brokerages.list_brokerages(user_id), fn brokerage ->
       [key: brokerage.name, value: brokerage.id]
     end)
   end

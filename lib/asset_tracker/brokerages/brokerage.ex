@@ -7,6 +7,7 @@ defmodule AssetTracker.Brokerages.Brokerage do
   schema "brokerages" do
     field :name, :string
     belongs_to :user, AssetTracker.Accounts.User
+    has_many :assets, AssetTracker.Assets.Asset
 
     timestamps()
   end
@@ -17,5 +18,9 @@ defmodule AssetTracker.Brokerages.Brokerage do
     |> cast(params, [:name, :user_id])
     |> validate_required([:name, :user_id])
     |> unique_constraint(:name)
+    |> foreign_key_constraint(:assets,
+      name: :assets_brokerage_id_fkey,
+      message: "exist with this brokerage"
+    )
   end
 end
