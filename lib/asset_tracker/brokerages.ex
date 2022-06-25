@@ -6,8 +6,8 @@ defmodule AssetTracker.Brokerages do
 
   alias AssetTracker.Brokerages.Brokerage
 
-  def list_brokerages do
-    Repo.all(Brokerage)
+  def list_brokerages(user_id) do
+    from(Brokerage) |> where([b], b.user_id == ^user_id) |> Repo.all()
   end
 
   def get_brokerage!(id), do: Repo.get!(Brokerage, id)
@@ -26,6 +26,7 @@ defmodule AssetTracker.Brokerages do
 
   def delete_brokerage(%Brokerage{} = brokerage) do
     brokerage
+    |> Brokerage.changeset(%{})
     |> Repo.delete()
   end
 

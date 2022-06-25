@@ -42,7 +42,7 @@ defmodule AssetTrackerWeb.BrokerageLiveBrokerage do
         |> follow_redirect(conn, Routes.brokerage_index_path(conn, :index))
 
       assert html =~ "Brokerage created successfully"
-      assert html =~ "some name"
+      assert html =~ "IBKR"
     end
 
     test "updates brokerage in listing", %{conn: conn, brokerage: brokerage} do
