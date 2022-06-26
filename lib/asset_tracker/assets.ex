@@ -6,8 +6,9 @@ defmodule AssetTracker.Assets do
 
   alias AssetTracker.Assets.Asset
 
-  def list_assets do
-    Repo.all(Asset) |> Repo.preload(:brokerage)
+  @spec list_assets(Ecto.UUID.t()) :: [Asset.t()]
+  def list_assets(user_id) do
+    from(Asset) |> where([a], a.user_id == ^user_id) |> preload(:brokerage) |> Repo.all()
   end
 
   def list_assets_by_brokerage(brokerage_id) do
@@ -42,8 +43,11 @@ defmodule AssetTracker.Assets do
     |> Repo.update_all([])
   end
 
+  @spec delete_asset(AssetTracker.Assets.Asset.t()) ::
+          {:ok, Asset.t()} | {:error, Ecto.Changeset.t()}
   def delete_asset(%Asset{} = asset) do
     asset
+    |> Asset.changeset(%{})
     |> Repo.delete()
   end
 

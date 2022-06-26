@@ -10,9 +10,9 @@ defmodule AssetTracker.AssetsTest do
   describe "assets" do
     @invalid_attrs %{name: nil}
 
-    test "list_assets/0 returns all assets" do
+    test "list_assets/1 returns all assets belonging to user_id" do
       asset = asset_fixture()
-      assert Assets.list_assets() == [asset]
+      assert Assets.list_assets(asset.user_id) == [asset]
     end
 
     test "list_assets_by_brokerage/1 returns all assets" do

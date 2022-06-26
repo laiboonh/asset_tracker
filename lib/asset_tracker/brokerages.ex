@@ -6,12 +6,12 @@ defmodule AssetTracker.Brokerages do
 
   alias AssetTracker.Brokerages.Brokerage
 
-  @spec list_brokerages(non_neg_integer()) :: [Brokerage.t()]
+  @spec list_brokerages(Ecto.UUID.t()) :: [Brokerage.t()]
   def list_brokerages(user_id) do
     from(Brokerage) |> where([b], b.user_id == ^user_id) |> Repo.all()
   end
 
-  @spec get_brokerage(non_neg_integer(), non_neg_integer()) ::
+  @spec get_brokerage(Ecto.UUID.t(), Ecto.UUID.t()) ::
           {:ok, Brokerage.t()} | {:error, :not_found | :unauthorized}
   def get_brokerage(id, user_id) do
     case Repo.get(Brokerage, id) do
@@ -37,6 +37,8 @@ defmodule AssetTracker.Brokerages do
     |> Repo.update()
   end
 
+  @spec delete_brokerage(AssetTracker.Brokerages.Brokerage.t()) ::
+          {:ok, Brokerage.t()} | {:error, Ecto.Changeset.t()}
   def delete_brokerage(%Brokerage{} = brokerage) do
     brokerage
     |> Brokerage.changeset(%{})
