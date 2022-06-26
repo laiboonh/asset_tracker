@@ -20,9 +20,9 @@ defmodule AssetTracker.BrokeragesTest do
       assert Brokerages.list_brokerages(user.id) == [brokerage]
     end
 
-    test "get_brokerage!/1 returns the brokerage with given id" do
+    test "get_brokerage/2 returns the brokerage with given id" do
       brokerage = brokerage_fixture()
-      assert Brokerages.get_brokerage!(brokerage.id) == brokerage
+      assert Brokerages.get_brokerage(brokerage.id, brokerage.user_id) == {:ok, brokerage}
     end
 
     test "create_brokerage/1 with valid data creates a brokerage" do
@@ -52,13 +52,13 @@ defmodule AssetTracker.BrokeragesTest do
 
       assert {:error, %Ecto.Changeset{}} = Brokerages.update_brokerage(brokerage, @invalid_attrs)
 
-      assert brokerage == Brokerages.get_brokerage!(brokerage.id)
+      assert {:ok, brokerage} == Brokerages.get_brokerage(brokerage.id, brokerage.user_id)
     end
 
     test "delete_brokerage/1 with valid data deletes the brokerage" do
       brokerage = brokerage_fixture()
       assert {:ok, %Brokerage{}} = Brokerages.delete_brokerage(brokerage)
-      assert_raise Ecto.NoResultsError, fn -> Brokerages.get_brokerage!(brokerage.id) end
+      assert Brokerages.get_brokerage(brokerage.id, brokerage.user_id) == {:error, :not_found}
     end
 
     test "change_brokerage/1 returns a test changeset" do

@@ -1,6 +1,8 @@
 defmodule AssetTracker.Brokerages.Brokerage do
   @moduledoc false
 
+  @type t :: %__MODULE__{}
+
   use Ecto.Schema
   import Ecto.Changeset
 

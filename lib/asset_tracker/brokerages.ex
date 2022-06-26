@@ -6,11 +6,22 @@ defmodule AssetTracker.Brokerages do
 
   alias AssetTracker.Brokerages.Brokerage
 
+  @spec list_brokerages(non_neg_integer()) :: [Brokerage.t()]
   def list_brokerages(user_id) do
     from(Brokerage) |> where([b], b.user_id == ^user_id) |> Repo.all()
   end
 
-  def get_brokerage!(id), do: Repo.get!(Brokerage, id)
+  @spec get_brokerage(non_neg_integer(), non_neg_integer()) ::
+          {:ok, Brokerage.t()} | {:error, :not_found | :unauthorized}
+  def get_brokerage(id, user_id) do
+    case Repo.get(Brokerage, id) do
+      nil ->
+        {:error, :not_found}
+
+      brokerage ->
+        if brokerage.user_id == user_id, do: {:ok, brokerage}, else: {:error, :unauthorized}
+    end
+  end
 
   def create_brokerage(attrs \\ %{}) do
     %Brokerage{}
