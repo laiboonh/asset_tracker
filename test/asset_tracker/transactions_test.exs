@@ -65,7 +65,7 @@ defmodule AssetTracker.TransactionsTest do
 
       assert length(transaction.actions) == 1
 
-      asset = AssetTracker.Assets.get_asset!(asset.id)
+      {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
       assert asset.units == 5.0
     end
@@ -95,13 +95,13 @@ defmodule AssetTracker.TransactionsTest do
 
       assert length(transaction.actions) == 1
 
-      asset = AssetTracker.Assets.get_asset!(asset.id)
+      {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
       assert asset.units == 15.0
 
       assert {:ok, _results} = Transactions.delete_transaction_and_update_assets(transaction.id)
 
-      asset = AssetTracker.Assets.get_asset!(asset.id)
+      {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
       assert asset.units == 10.0
 

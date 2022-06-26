@@ -19,9 +19,17 @@ defmodule AssetTracker.Assets do
     |> Repo.all()
   end
 
-  def get_asset!(id), do: Repo.get!(Asset, id) |> Repo.preload(:brokerage)
+  @spec get_asset(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, Asset.t()} | {:error, :not_found | :unauthorized}
+  def get_asset(id, user_id) do
+    case Repo.get(Asset, id) |> Repo.preload(:brokerage) do
+      nil ->
+        {:error, :not_found}
 
-  def get_asset(id), do: Repo.get(Asset, id) |> Repo.preload(:brokerage)
+      asset ->
+        if asset.user_id == user_id, do: {:ok, asset}, else: {:error, :unauthorized}
+    end
+  end
 
   def create_asset(attrs \\ %{}) do
     %Asset{}

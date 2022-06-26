@@ -24,10 +24,27 @@ defmodule AssetTrackerWeb.AssetLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Asset")
-    |> assign(:asset, Assets.get_asset!(id))
-    |> assign(:brokerages, brokerages(socket.assigns.user_id))
+    case Assets.get_asset(id, socket.assigns.user_id) do
+      {:ok, asset} ->
+        socket
+        |> assign(:page_title, "Edit Asset")
+        |> assign(:asset, asset)
+        |> assign(:brokerages, brokerages(socket.assigns.user_id))
+
+      {:error, :not_found} ->
+        socket
+        |> put_flash(
+          :info,
+          "Asset with id #{id} not found"
+        )
+
+      {:error, :unauthorized} ->
+        socket
+        |> put_flash(
+          :info,
+          "Asset with id #{id} does not belong to you"
+        )
+    end
   end
 
   defp apply_action(socket, :new, _params) do
@@ -46,8 +63,29 @@ defmodule AssetTrackerWeb.AssetLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    asset = Assets.get_asset!(id)
+    case Assets.get_asset(id, socket.assigns.user_id) do
+      {:ok, asset} ->
+        do_delete(asset, socket)
 
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Asset with id #{id} not found"
+         )}
+
+      {:error, :unauthorized} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Asset with id #{id} does not belong to you"
+         )}
+    end
+  end
+
+  def do_delete(asset, socket) do
     case Assets.delete_asset(asset) do
       {:ok, asset} ->
         {:noreply,

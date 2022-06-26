@@ -25,9 +25,9 @@ defmodule AssetTracker.AssetsTest do
       assert Assets.list_assets_by_brokerage(asset2.brokerage.id, asset2.user_id) == [asset2]
     end
 
-    test "get_asset!/1 returns the asset with given id" do
+    test "get_asset/2 returns the asset with given id" do
       asset = asset_fixture()
-      assert Assets.get_asset!(asset.id) == asset
+      assert Assets.get_asset(asset.id, asset.user_id) == {:ok, asset}
     end
 
     test "create_asset/1 with valid data creates a asset" do
@@ -63,7 +63,7 @@ defmodule AssetTracker.AssetsTest do
 
       assert {:error, %Ecto.Changeset{}} = Assets.update_asset(asset, @invalid_attrs)
 
-      assert asset == Assets.get_asset!(asset.id)
+      assert Assets.get_asset(asset.id, asset.user_id) == {:ok, asset}
     end
 
     test "update_units/2 with valid data increments/decrements the asset's unit" do
