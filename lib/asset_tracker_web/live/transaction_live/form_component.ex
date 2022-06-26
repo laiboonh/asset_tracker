@@ -101,9 +101,12 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     assign(
       socket,
       :assets,
-      Enum.map(AssetTracker.Assets.list_assets_by_brokerage(brokerage_id), fn asset ->
-        [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
-      end)
+      Enum.map(
+        AssetTracker.Assets.list_assets_by_brokerage(brokerage_id, socket.assigns.user_id),
+        fn asset ->
+          [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
+        end
+      )
     )
   end
 

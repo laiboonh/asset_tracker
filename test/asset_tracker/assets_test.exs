@@ -15,13 +15,14 @@ defmodule AssetTracker.AssetsTest do
       assert Assets.list_assets(asset.user_id) == [asset]
     end
 
-    test "list_assets_by_brokerage/1 returns all assets" do
+    test "list_assets_by_brokerage/2 returns all assets" do
       asset1 = asset_fixture() |> AssetTracker.Repo.preload(:user)
       user = asset1.user
-      brokerage = brokerage_fixture(%{user: user, name: "some other name"})
 
+      brokerage = brokerage_fixture(%{user: user, name: "some other name"})
       asset2 = asset_fixture(%{brokerage: brokerage, name: "some other name"})
-      assert Assets.list_assets_by_brokerage(asset2.brokerage.id) == [asset2]
+
+      assert Assets.list_assets_by_brokerage(asset2.brokerage.id, asset2.user_id) == [asset2]
     end
 
     test "get_asset!/1 returns the asset with given id" do
