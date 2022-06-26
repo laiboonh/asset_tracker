@@ -9,10 +9,13 @@ defmodule AssetTrackerWeb.AssetLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
+    socket =
+      socket
+      |> assign(:user_id, Utils.get_user_id(session))
+
     {:ok,
      socket
-     |> assign(:assets, list_assets())
-     |> assign(:user_id, Utils.get_user_id(session))}
+     |> assign(:assets, Assets.list_assets(socket.assigns.user_id))}
   end
 
   @impl true
@@ -44,13 +47,24 @@ defmodule AssetTrackerWeb.AssetLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     asset = Assets.get_asset!(id)
-    {:ok, _} = Assets.delete_asset(asset)
 
-    {:noreply, assign(socket, :assets, list_assets())}
-  end
+    case Assets.delete_asset(asset) do
+      {:ok, asset} ->
+        {:noreply,
+         assign(
+           socket |> put_flash(:info, "Asset #{asset.name} deleted successfully"),
+           :assets,
+           Assets.list_assets(socket.assigns.user_id)
+         )}
 
-  defp list_assets do
-    Assets.list_assets()
+      {:error, changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Fail to delete Asset #{asset.name} because #{Utils.error_message(changeset)}"
+         )}
+    end
   end
 
   defp brokerages(user_id) do
