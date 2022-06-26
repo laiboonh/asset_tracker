@@ -24,9 +24,26 @@ defmodule AssetTrackerWeb.BrokerageLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Brokerage")
-    |> assign(:brokerage, Brokerages.get_brokerage!(id))
+    case Brokerages.get_brokerage(id, socket.assigns.user_id) do
+      {:ok, brokerage} ->
+        socket
+        |> assign(:page_title, "Edit Brokerage")
+        |> assign(:brokerage, brokerage)
+
+      {:error, :not_found} ->
+        socket
+        |> put_flash(
+          :info,
+          "Brokerage with id #{id} not found"
+        )
+
+      {:error, :unauthorized} ->
+        socket
+        |> put_flash(
+          :info,
+          "Brokerage with id #{id} does not belong to you"
+        )
+    end
   end
 
   defp apply_action(socket, :new, _params) do
@@ -44,8 +61,29 @@ defmodule AssetTrackerWeb.BrokerageLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    brokerage = Brokerages.get_brokerage!(id)
+    case Brokerages.get_brokerage(id, socket.assigns.user_id) do
+      {:ok, brokerage} ->
+        do_delete(brokerage, socket)
 
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Brokerage with id #{id} not found"
+         )}
+
+      {:error, :unauthorized} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Brokerage with id #{id} does not belong to you"
+         )}
+    end
+  end
+
+  def do_delete(brokerage, socket) do
     case Brokerages.delete_brokerage(brokerage) do
       {:ok, brokerage} ->
         {:noreply,

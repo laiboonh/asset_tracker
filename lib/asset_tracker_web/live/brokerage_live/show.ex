@@ -13,10 +13,29 @@ defmodule AssetTrackerWeb.BrokerageLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply,
-     socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:brokerage, Brokerages.get_brokerage!(id))}
+    case Brokerages.get_brokerage(id, socket.assigns.user_id) do
+      {:ok, brokerage} ->
+        {:noreply,
+         socket
+         |> assign(:page_title, page_title(socket.assigns.live_action))
+         |> assign(:brokerage, brokerage)}
+
+      {:error, :not_found} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Brokerage with id #{id} not found"
+         )}
+
+      {:error, :unauthorized} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :info,
+           "Brokerage with id #{id} does not belong to you"
+         )}
+    end
   end
 
   defp page_title(:show), do: "Show Brokerage"
