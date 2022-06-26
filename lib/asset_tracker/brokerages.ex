@@ -29,6 +29,8 @@ defmodule AssetTracker.Brokerages do
     |> Repo.insert()
   end
 
+  @spec update_brokerage(Brokerage.t(), map()) ::
+          {:ok, Brokerage.t()} | {:error, Ecto.Changeset.t()}
   def update_brokerage(%Brokerage{} = brokerage, attrs) do
     brokerage
     |> Brokerage.changeset(attrs)
