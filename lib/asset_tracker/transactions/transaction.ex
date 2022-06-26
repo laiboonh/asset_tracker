@@ -6,9 +6,11 @@ defmodule AssetTracker.Transactions.Transaction do
 
   alias AssetTracker.Transactions.Action
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+
   schema "transactions" do
-    belongs_to :brokerage, AssetTracker.Brokerages.Brokerage
-    belongs_to :user, AssetTracker.Accounts.User
+    belongs_to :brokerage, AssetTracker.Brokerages.Brokerage, type: :binary_id
+    belongs_to :user, AssetTracker.Accounts.User, type: :binary_id
     has_many :actions, AssetTracker.Transactions.Action, on_delete: :delete_all
     field :transacted_at, :date
     timestamps()

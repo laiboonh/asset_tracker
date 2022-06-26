@@ -4,9 +4,11 @@ defmodule AssetTracker.Transactions.Action do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+
   schema "actions" do
-    belongs_to :transaction, AssetTracker.Transactions.Transaction
-    belongs_to :asset, AssetTracker.Assets.Asset
+    belongs_to :transaction, AssetTracker.Transactions.Transaction, type: :binary_id
+    belongs_to :asset, AssetTracker.Assets.Asset, type: :binary_id
     field :units, :float
     timestamps()
 

@@ -6,9 +6,11 @@ defmodule AssetTracker.Brokerages.Brokerage do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+
   schema "brokerages" do
     field :name, :string
-    belongs_to :user, AssetTracker.Accounts.User
+    belongs_to :user, AssetTracker.Accounts.User, type: :binary_id
     has_many :assets, AssetTracker.Assets.Asset
 
     timestamps()
