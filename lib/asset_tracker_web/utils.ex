@@ -14,4 +14,9 @@ defmodule AssetTrackerWeb.Utils do
       "#{key} #{message}"
     end)
   end
+
+  @spec atom_to_string(atom) :: binary
+  def atom_to_string(atom) do
+    Atom.to_string(atom) |> String.replace("_", " ") |> String.capitalize()
+  end
 end

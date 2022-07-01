@@ -38,12 +38,12 @@ defmodule AssetTrackerWeb.LiveHelpers do
         phx-key="escape"
       >
         <%= if @return_to do %>
-          <%= live_patch "✖",
+          <%= live_patch("✖",
             to: @return_to,
             id: "close",
             class: "phx-modal-close",
             phx_click: hide_modal()
-          %>
+          ) %>
         <% else %>
           <a id="close" href="#" class="phx-modal-close" phx-click={hide_modal()}>✖</a>
         <% end %>
@@ -59,4 +59,7 @@ defmodule AssetTrackerWeb.LiveHelpers do
     |> JS.hide(to: "#modal", transition: "fade-out")
     |> JS.hide(to: "#modal-content", transition: "fade-out-scale")
   end
+
+  @spec atom_to_string(atom) :: binary
+  def atom_to_string(atom), do: AssetTrackerWeb.Utils.atom_to_string(atom)
 end

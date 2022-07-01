@@ -83,7 +83,11 @@ defmodule AssetTracker.Accounts do
   def upsert_user(attrs) do
     %User{}
     |> User.registration_without_password_changeset(attrs)
-    |> Repo.insert(on_conflict: {:replace, [:updated_at]}, conflict_target: :email)
+    |> Repo.insert(
+      returning: true,
+      on_conflict: {:replace, [:updated_at]},
+      conflict_target: :email
+    )
   end
 
   @doc """
@@ -228,6 +232,7 @@ defmodule AssetTracker.Accounts do
   """
   def generate_user_session_token(user) do
     {token, user_token} = UserToken.build_session_token(user)
+
     Repo.insert!(user_token)
     token
   end

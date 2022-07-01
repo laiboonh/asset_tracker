@@ -5,6 +5,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
   alias AssetTracker.Transactions
   alias AssetTracker.Transactions.Action
+  alias AssetTrackerWeb.Utils
 
   @impl true
   def update(%{transaction: transaction} = assigns, socket) do
@@ -14,7 +15,9 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign(:changeset, changeset)
-     |> update_assets_in_assigns()}
+     |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
+     |> update_action_types_in_assigns()}
   end
 
   @impl true
@@ -28,7 +31,9 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
     {:noreply,
      assign(socket, :changeset, changeset)
-     |> update_assets_in_assigns()}
+     |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
+     |> update_action_types_in_assigns()}
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
@@ -55,7 +60,9 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
 
     {:noreply,
      assign(socket, changeset: changeset)
-     |> update_assets_in_assigns()}
+     |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
+     |> update_action_types_in_assigns()}
   end
 
   def handle_event("remove-action", %{"remove" => remove_id}, socket) do
@@ -105,6 +112,38 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
         AssetTracker.Assets.list_assets_by_brokerage(brokerage_id, socket.assigns.user_id),
         fn asset ->
           [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
+        end
+      )
+    )
+  end
+
+  defp update_tx_types_in_assigns(socket) do
+    assign(
+      socket,
+      :tx_types,
+      Enum.map(
+        Ecto.Enum.values(AssetTracker.Transactions.Transaction, :type),
+        fn type ->
+          [
+            key: Utils.atom_to_string(type),
+            value: type
+          ]
+        end
+      )
+    )
+  end
+
+  defp update_action_types_in_assigns(socket) do
+    assign(
+      socket,
+      :action_types,
+      Enum.map(
+        Ecto.Enum.values(AssetTracker.Transactions.Action, :type),
+        fn type ->
+          [
+            key: Utils.atom_to_string(type),
+            value: type
+          ]
         end
       )
     )
