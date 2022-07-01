@@ -5,14 +5,14 @@ defmodule AssetTrackerWeb.PageController do
 
   def index(conn, _params) do
     conn =
-      if get_session(conn, :user_token) != nil do
-        user = AssetTracker.Accounts.get_user_by_session_token(get_session(conn, :user_token))
-
+      with user_token when is_nil(user_token) != true <- get_session(conn, :user_token),
+           user when is_nil(user) != true <-
+             AssetTracker.Accounts.get_user_by_session_token(get_session(conn, :user_token)) do
         conn
         |> assign(:brokerages, Brokerages.list_brokerages(user.id))
         |> assign(:assets, Assets.list_assets(user.id))
       else
-        conn
+        nil -> conn
       end
 
     conn

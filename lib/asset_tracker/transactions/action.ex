@@ -9,7 +9,7 @@ defmodule AssetTracker.Transactions.Action do
   schema "actions" do
     belongs_to :transaction, AssetTracker.Transactions.Transaction, type: :binary_id
     belongs_to :asset, AssetTracker.Assets.Asset, type: :binary_id
-    field :units, :float
+    field :units, :decimal
     field :type, Ecto.Enum, values: [:transfer_in, :transfer_out]
     timestamps()
 
