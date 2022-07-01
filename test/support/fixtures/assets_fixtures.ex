@@ -13,7 +13,7 @@ defmodule AssetTracker.AssetsFixtures do
         user_id: brokerage.user.id,
         brokerage_id: brokerage.id,
         name: Map.get(attrs, :name) || "some name",
-        units: 10.0
+        units: Decimal.from_float(10.0)
       })
       |> AssetTracker.Assets.create_asset()
 

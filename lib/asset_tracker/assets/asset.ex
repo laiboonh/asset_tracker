@@ -10,7 +10,7 @@ defmodule AssetTracker.Assets.Asset do
 
   schema "assets" do
     field :name, :string
-    field :units, :float
+    field :units, :decimal
     belongs_to :user, AssetTracker.Accounts.User, type: :binary_id
     belongs_to :brokerage, AssetTracker.Brokerages.Brokerage, type: :binary_id
 

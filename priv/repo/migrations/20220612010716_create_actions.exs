@@ -11,7 +11,7 @@ defmodule AssetTracker.Repo.Migrations.CreateActions do
 
       add(:asset_id, references(:assets, type: :uuid), null: false)
       add(:type, :binary, null: false)
-      add(:units, :float, null: false)
+      add(:units, :decimal, null: false)
       timestamps()
     end
   end
