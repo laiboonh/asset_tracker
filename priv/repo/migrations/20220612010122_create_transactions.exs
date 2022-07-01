@@ -7,6 +7,7 @@ defmodule AssetTracker.Repo.Migrations.CreateTransactions do
       add(:user_id, references(:users, type: :uuid), null: false)
       add(:brokerage_id, references(:brokerages, type: :uuid), null: false)
       add(:transacted_at, :date, null: false)
+      add(:type, :binary, null: false)
       timestamps()
     end
   end

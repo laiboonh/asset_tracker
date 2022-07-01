@@ -12,6 +12,7 @@ defmodule AssetTracker.TransactionsFixtures do
         user_id: asset.user.id,
         brokerage_id: asset.brokerage.id,
         transacted_at: Date.utc_today(),
+        type: :deposit,
         actions: [
           %{
             asset_id: asset.id,
