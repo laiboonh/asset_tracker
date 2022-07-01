@@ -10,7 +10,7 @@ defmodule AssetTracker.Transactions.Action do
     belongs_to :transaction, AssetTracker.Transactions.Transaction, type: :binary_id
     belongs_to :asset, AssetTracker.Assets.Asset, type: :binary_id
     field :units, :float
-    field :type, Ecto.Enum, values: [:transfer_in, :transfer_out]
+    field :type, Ecto.Enum, values: [:transfer_in, :transfer_out, :sell_asset, :buy_asset]
     timestamps()
 
     # Virtual

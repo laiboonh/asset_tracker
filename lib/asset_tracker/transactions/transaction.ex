@@ -13,7 +13,19 @@ defmodule AssetTracker.Transactions.Transaction do
     belongs_to :user, AssetTracker.Accounts.User, type: :binary_id
     has_many :actions, AssetTracker.Transactions.Action, on_delete: :delete_all
     field :transacted_at, :date
-    field :type, Ecto.Enum, values: [:deposit, :withdrawal]
+
+    field :type, Ecto.Enum,
+      values: [
+        :deposit,
+        :rewards,
+        :dividend,
+        :withdrawal,
+        :withholding_tax,
+        :fx,
+        :buy_stock,
+        :sell_stock
+      ]
+
     timestamps()
   end
 
