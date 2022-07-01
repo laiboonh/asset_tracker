@@ -10,6 +10,7 @@ defmodule AssetTracker.Transactions.Action do
     belongs_to :transaction, AssetTracker.Transactions.Transaction, type: :binary_id
     belongs_to :asset, AssetTracker.Assets.Asset, type: :binary_id
     field :units, :float
+    field :type, Ecto.Enum, values: [:transfer_in, :transfer_out]
     timestamps()
 
     # Virtual
@@ -20,14 +21,14 @@ defmodule AssetTracker.Transactions.Action do
   @doc false
   def changeset(action, attrs) do
     action
-    |> cast(attrs, [:transaction_id, :asset_id, :units])
-    |> validate_required([:transaction_id, :asset_id, :units])
+    |> cast(attrs, [:transaction_id, :asset_id, :units, :type])
+    |> validate_required([:transaction_id, :asset_id, :units, :type])
   end
 
   def create_changeset(action, attrs) do
     action
     |> Map.put(:temp_id, action.temp_id || attrs["temp_id"])
-    |> cast(attrs, [:asset_id, :units])
-    |> validate_required([:asset_id, :units])
+    |> cast(attrs, [:asset_id, :units, :type])
+    |> validate_required([:asset_id, :units, :type])
   end
 end

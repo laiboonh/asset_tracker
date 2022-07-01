@@ -35,7 +35,8 @@ defmodule AssetTracker.TransactionsTest do
         actions: [
           %{
             asset_id: asset.id,
-            units: 0.0
+            units: 0.0,
+            type: :transfer_in
           }
         ]
       }
@@ -54,7 +55,8 @@ defmodule AssetTracker.TransactionsTest do
         actions: [
           %{
             asset_id: asset.id,
-            units: -5.0
+            units: -5.0,
+            type: :transfer_in
           }
         ]
       }
@@ -84,7 +86,8 @@ defmodule AssetTracker.TransactionsTest do
         actions: [
           %{
             asset_id: asset.id,
-            units: 5.0
+            units: 5.0,
+            type: :transfer_in
           }
         ]
       }

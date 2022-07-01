@@ -15,6 +15,7 @@ defmodule AssetTracker.TransactionsFixtures do
         actions: [
           %{
             asset_id: asset.id,
+            type: :transfer_in,
             units: 0.0
           }
         ]
