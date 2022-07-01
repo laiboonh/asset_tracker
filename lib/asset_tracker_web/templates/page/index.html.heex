@@ -1,8 +1,10 @@
-<%= link("Brokerages", to: Routes.brokerage_index_path(@conn, :index)) %>
-<%= if !Enum.empty?(@brokerages) do %>
-  &#8680; <%= link("Assets", to: Routes.asset_index_path(@conn, :index)) %>
-  <%= if !Enum.empty?(@assets) do %>
-    &#8680; <%= link("Transactions", to: Routes.transaction_index_path(@conn, :index)) %>
+<%= if @current_user do %>
+  <%= link("Brokerages", to: Routes.brokerage_index_path(@conn, :index)) %>
+  <%= if !Enum.empty?(@brokerages) do %>
+    &#8680; <%= link("Assets", to: Routes.asset_index_path(@conn, :index)) %>
+    <%= if !Enum.empty?(@assets) do %>
+      &#8680; <%= link("Transactions", to: Routes.transaction_index_path(@conn, :index)) %>
+    <% end %>
   <% end %>
 <% end %>
 
