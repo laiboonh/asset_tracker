@@ -16,6 +16,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
      |> assign(assigns)
      |> assign(:changeset, changeset)
      |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
      |> update_action_types_in_assigns()}
   end
 
@@ -31,6 +32,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     {:noreply,
      assign(socket, :changeset, changeset)
      |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
      |> update_action_types_in_assigns()}
   end
 
@@ -59,6 +61,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     {:noreply,
      assign(socket, changeset: changeset)
      |> update_assets_in_assigns()
+     |> update_tx_types_in_assigns
      |> update_action_types_in_assigns()}
   end
 
@@ -109,6 +112,22 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
         AssetTracker.Assets.list_assets_by_brokerage(brokerage_id, socket.assigns.user_id),
         fn asset ->
           [key: "#{asset.name} (#{asset.brokerage.name})", value: asset.id]
+        end
+      )
+    )
+  end
+
+  defp update_tx_types_in_assigns(socket) do
+    assign(
+      socket,
+      :tx_types,
+      Enum.map(
+        Ecto.Enum.values(AssetTracker.Transactions.Transaction, :type),
+        fn type ->
+          [
+            key: Utils.atom_to_string(type),
+            value: type
+          ]
         end
       )
     )

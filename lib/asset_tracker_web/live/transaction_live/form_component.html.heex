@@ -17,6 +17,10 @@
     <%= select(f, :brokerage_id, @brokerages) %>
     <%= error_tag(f, :brokerage_id) %>
 
+    <%= label(f, :type) %>
+    <%= select(f, :type, @tx_types) %>
+    <%= error_tag(f, :type) %>
+
     <%= label(f, :actions) %>
 
     <a href="#" phx-target={@myself} phx-click="add-action">Add an action</a>

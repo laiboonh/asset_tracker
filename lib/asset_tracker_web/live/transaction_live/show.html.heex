@@ -22,8 +22,20 @@
     <%= @transaction.transacted_at %>
   </li>
   <li>
+    <strong>Type:</strong>
+    <%= atom_to_string(@transaction.type) %>
+  </li>
+  <li>
     <strong>Brokerage Name:</strong>
     <%= @transaction.brokerage.name %>
+  </li>
+  <li>
+    <strong>Actions:</strong>
+    <%= for action <- @transaction.actions do %>
+      <%= action.units %>
+      <%= action.asset.name %>
+      <%= atom_to_string(action.type) %>
+    <% end %>
   </li>
 </ul>
 

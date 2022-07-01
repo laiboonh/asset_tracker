@@ -20,6 +20,7 @@
   <thead>
     <tr>
       <th>Transacted At</th>
+      <th>Type</th>
       <th>Brokerage</th>
       <th>Actions</th>
       <th></th>
@@ -29,6 +30,7 @@
     <%= for transaction <- @transactions do %>
       <tr id={"transaction-#{transaction.id}"}>
         <td><%= transaction.transacted_at %></td>
+        <td><%= atom_to_string(transaction.type) %></td>
         <td><%= transaction.brokerage.name %></td>
         <td>
           <%= for action <- transaction.actions do %>
