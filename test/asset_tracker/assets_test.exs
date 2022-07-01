@@ -42,7 +42,7 @@ defmodule AssetTracker.AssetsTest do
 
       assert {:ok, %Asset{} = asset} = Assets.create_asset(valid_attrs)
       assert asset.name == "some name"
-      assert asset.units == 10.0
+      assert asset.units == Decimal.from_float(10.0)
     end
 
     test "create_asset/1 with invalid data returns error changeset" do
@@ -69,11 +69,13 @@ defmodule AssetTracker.AssetsTest do
     test "update_units/2 with valid data increments/decrements the asset's unit" do
       asset = asset_fixture()
 
-      assert {_num_rows_updated, _select_result} = Assets.update_units(asset.id, 1.23)
+      assert {_num_rows_updated, _select_result} =
+               Assets.update_units(asset.id, Decimal.from_float(1.23))
 
-      assert {_num_rows_updated, [updated_units]} = Assets.update_units(asset.id, -1.23)
+      assert {_num_rows_updated, [updated_units]} =
+               Assets.update_units(asset.id, Decimal.from_float(-1.23))
 
-      assert updated_units === 10.0
+      assert updated_units == Decimal.new("10.00")
     end
   end
 end

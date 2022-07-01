@@ -71,7 +71,7 @@ defmodule AssetTracker.TransactionsTest do
 
       {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
-      assert asset.units == 5.0
+      assert asset.units == Decimal.from_float(5.0)
     end
 
     test "create_transaction/1 with invalid data returns error changeset" do
@@ -103,13 +103,13 @@ defmodule AssetTracker.TransactionsTest do
 
       {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
-      assert asset.units == 15.0
+      assert asset.units == Decimal.from_float(15.0)
 
       assert {:ok, _results} = Transactions.delete_transaction_and_update_assets(transaction.id)
 
       {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
-      assert asset.units == 10.0
+      assert asset.units == Decimal.from_float(10.0)
 
       assert_raise Ecto.NoResultsError, fn ->
         AssetTracker.Transactions.get_transaction!(transaction.id)

@@ -62,7 +62,9 @@ defmodule AssetTracker.Transactions do
       results =
         Enum.map(transaction.actions, fn action ->
           %Action{asset: asset, units: units} = action |> Repo.preload(:asset)
-          {1, _select_result} = AssetTracker.Assets.update_units(asset.id, units * -1)
+
+          {1, _select_result} =
+            AssetTracker.Assets.update_units(asset.id, units |> Decimal.negate())
         end)
 
       {:ok, results}
