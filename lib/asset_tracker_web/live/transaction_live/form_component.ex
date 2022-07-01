@@ -90,7 +90,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
       {:error, failed_operation, _failed_value, _changes_so_far} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Fail to create transaction. Failed operation: #{failed_operation}")
+         |> put_flash(:error, "Fail to create transaction. Failed operation: #{failed_operation}")
          |> push_redirect(to: socket.assigns.return_to)}
     end
   end
