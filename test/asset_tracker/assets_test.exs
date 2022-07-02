@@ -77,5 +77,71 @@ defmodule AssetTracker.AssetsTest do
 
       assert updated_units == Decimal.new("10.00")
     end
+
+    test "total_cost/1 returns cost of asset" do
+      asset =
+        asset_fixture(%{name: "QQQ", units: 0.0})
+        |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      money =
+        asset_fixture(%{brokerage: asset.brokerage, name: "USD", units: 100.0})
+        |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      valid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :buy_asset,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: 10.0,
+            type: :buy_asset
+          },
+          %{
+            asset_id: money.id,
+            units: -50.0,
+            type: :sell_asset
+          }
+        ]
+      }
+
+      assert {:ok, _results} =
+               AssetTracker.Transactions.create_transaction_update_assets(valid_attrs)
+
+      valid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :sell_asset,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: -5.0,
+            type: :sell_asset
+          },
+          %{
+            asset_id: money.id,
+            units: 20.0,
+            type: :buy_asset
+          }
+        ]
+      }
+
+      assert {:ok, _results} =
+               AssetTracker.Transactions.create_transaction_update_assets(valid_attrs)
+
+      # check assets' units
+      {:ok, %Asset{name: "USD", units: asset_units}} = Assets.get_asset(money.id, asset.user_id)
+      assert asset_units == Decimal.from_float(70.0)
+
+      {:ok, %Asset{name: "QQQ", units: asset_units}} = Assets.get_asset(asset.id, asset.user_id)
+      assert asset_units == Decimal.from_float(5.0)
+
+      assert Assets.total_cost(asset.id) == [
+               {:buy_asset, "QQQ", Decimal.from_float(10.0)},
+               {:sell_asset, "USD", Decimal.from_float(-50.0)}
+             ]
+    end
   end
 end
