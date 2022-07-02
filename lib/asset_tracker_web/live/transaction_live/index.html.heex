@@ -33,11 +33,15 @@
         <td><%= atom_to_string(transaction.type) %></td>
         <td><%= transaction.brokerage.name %></td>
         <td>
-          <%= for action <- transaction.actions do %>
-            <%= action.units %>
-            <%= action.asset.name %>
-            <%= atom_to_string(action.type) %>
-          <% end %>
+          <dl>
+            <%= for action <- transaction.actions do %>
+              <dt>
+                <%= action.units %>
+                <%= action.asset.name %>
+                <%= atom_to_string(action.type) %>
+              </dt>
+            <% end %>
+          </dl>
         </td>
 
         <td>
