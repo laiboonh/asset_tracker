@@ -6,7 +6,7 @@ defmodule AssetTracker.TransactionsFixtures do
   def transaction_fixture(attrs \\ %{}) do
     asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
 
-    {:ok, transaction} =
+    {:ok, results} =
       attrs
       |> Enum.into(%{
         user_id: asset.user.id,
@@ -21,8 +21,8 @@ defmodule AssetTracker.TransactionsFixtures do
           }
         ]
       })
-      |> AssetTracker.Transactions.create_transaction()
+      |> AssetTracker.Transactions.create_transaction_update_assets()
 
-    transaction
+    %AssetTracker.Transactions.Transaction{} = results.create_transaction
   end
 end

@@ -18,7 +18,7 @@ defmodule AssetTracker.Transactions do
   def get_transaction!(id),
     do: Repo.get!(Transaction, id) |> Repo.preload(actions: [:asset], brokerage: [])
 
-  def create_transaction(attrs \\ %{}) do
+  defp create_transaction(attrs) do
     %Transaction{}
     |> Transaction.create_changeset(attrs)
     |> Repo.insert()

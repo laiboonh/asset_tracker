@@ -8,8 +8,6 @@ defmodule AssetTracker.TransactionsTest do
   import AssetTracker.TransactionsFixtures
 
   describe "transactions" do
-    @invalid_attrs %{transacted_at: nil}
-
     test "list_transactions/0 returns all transaction" do
       transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
       assert Transactions.list_transactions() == [transaction]
@@ -23,27 +21,6 @@ defmodule AssetTracker.TransactionsTest do
     test "get_transaction!/1 returns the transaction with given id" do
       transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
       assert Transactions.get_transaction!(transaction.id) == transaction
-    end
-
-    test "create_transaction/1 with valid data creates a transaction" do
-      asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
-
-      valid_attrs = %{
-        user_id: asset.user.id,
-        brokerage_id: asset.brokerage.id,
-        transacted_at: Date.utc_today(),
-        type: :deposit,
-        actions: [
-          %{
-            asset_id: asset.id,
-            units: 0.0,
-            type: :transfer_in
-          }
-        ]
-      }
-
-      assert {:ok, %Transaction{} = transaction} = Transactions.create_transaction(valid_attrs)
-      assert length(transaction.actions) == 1
     end
 
     test "create_transaction_update_assets/1 with valid data creates a transaction" do
@@ -74,8 +51,27 @@ defmodule AssetTracker.TransactionsTest do
       assert asset.units == Decimal.from_float(5.0)
     end
 
-    test "create_transaction/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Transactions.create_transaction(@invalid_attrs)
+    test "create_transaction_update_assets/1 with invalid data returns error changeset" do
+      asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      invalid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: nil,
+        type: :deposit,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: -5.0,
+            type: :transfer_in
+          }
+        ]
+      }
+
+      {:error, :create_transaction, %Ecto.Changeset{errors: errors}, _changes_so_far} =
+        Transactions.create_transaction_update_assets(invalid_attrs)
+
+      assert errors |> Keyword.keys() |> Enum.member?(:transacted_at)
     end
 
     test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do

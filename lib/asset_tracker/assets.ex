@@ -62,4 +62,28 @@ defmodule AssetTracker.Assets do
 
   def change_asset(%Asset{} = asset, params \\ %{}),
     do: Asset.changeset(asset, params)
+
+  @spec total_cost(Ecto.UUID.t()) :: list(tuple())
+  def total_cost(asset_id) do
+    AssetTracker.Transactions.Action
+    |> from()
+    |> join(
+      :inner,
+      [a],
+      t in fragment(
+        "
+        select t.id from transactions t
+        join actions a
+        on t.id = a.transaction_id
+        where a.asset_id = ? and t.type = 'buy_asset'
+        ",
+        ^Ecto.UUID.dump!(asset_id)
+      ),
+      on: a.transaction_id == t.id
+    )
+    |> join(:inner, [a, t], as in Asset, on: as.id == a.asset_id)
+    |> group_by([a, t, as], [a.type, as.name])
+    |> select([a, t, as], {a.type, as.name, sum(a.units)})
+    |> Repo.all()
+  end
 end
