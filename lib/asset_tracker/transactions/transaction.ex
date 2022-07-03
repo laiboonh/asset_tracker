@@ -21,8 +21,9 @@ defmodule AssetTracker.Transactions.Transaction do
         :dividend,
         :withdrawal,
         :withholding_tax,
-        :buy_asset,
-        :sell_asset
+        :fx,
+        :buy_stock,
+        :sell_stock
       ]
 
     timestamps()

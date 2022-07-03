@@ -15,11 +15,15 @@ defmodule AssetTrackerWeb.AssetLive.Show do
   def handle_params(%{"id" => id}, _, socket) do
     case Assets.get_asset(id, socket.assigns.user_id) do
       {:ok, asset} ->
+        total_costs = Assets.total_costs(id)
+
         {:noreply,
          socket
          |> assign(:page_title, page_title(socket.assigns.live_action))
          |> assign(:asset, asset)
-         |> assign(:brokerages, brokerages(socket.assigns.user_id))}
+         |> assign(:brokerages, brokerages(socket.assigns.user_id))
+         |> assign(:total_costs, total_costs)
+         |> average_cost(total_costs)}
 
       {:error, :not_found} ->
         {:noreply,
@@ -36,6 +40,22 @@ defmodule AssetTrackerWeb.AssetLive.Show do
            :info,
            "Asset with id #{id} does not belong to you"
          )}
+    end
+  end
+
+  defp average_cost(socket, total_costs) do
+    average_cost = Assets.average_cost(total_costs)
+
+    if average_cost != nil do
+      {average_cost_asset, average_cost_units} = average_cost
+
+      socket
+      |> assign(:average_cost_asset, average_cost_asset)
+      |> assign(:average_cost_units, average_cost_units |> Decimal.round(5))
+    else
+      socket
+      |> assign(:average_cost_asset, nil)
+      |> assign(:average_cost_units, nil)
     end
   end
 

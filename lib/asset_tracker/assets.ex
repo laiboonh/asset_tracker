@@ -3,6 +3,7 @@ defmodule AssetTracker.Assets do
 
   import Ecto.Query, warn: false
   alias AssetTracker.Repo
+  alias AssetTracker.Utils
 
   alias AssetTracker.Assets.Asset
 
@@ -63,8 +64,8 @@ defmodule AssetTracker.Assets do
   def change_asset(%Asset{} = asset, params \\ %{}),
     do: Asset.changeset(asset, params)
 
-  @spec total_cost(Ecto.UUID.t()) :: list(tuple())
-  def total_cost(asset_id) do
+  @spec total_costs(Ecto.UUID.t()) :: list(tuple())
+  def total_costs(asset_id) do
     AssetTracker.Transactions.Action
     |> from()
     |> join(
@@ -75,7 +76,7 @@ defmodule AssetTracker.Assets do
         select t.id from transactions t
         join actions a
         on t.id = a.transaction_id
-        where a.asset_id = ? and t.type = 'buy_asset'
+        where a.asset_id = ? and a.type = 'buy_asset'
         ",
         ^Ecto.UUID.dump!(asset_id)
       ),
@@ -83,7 +84,20 @@ defmodule AssetTracker.Assets do
     )
     |> join(:inner, [a, t], as in Asset, on: as.id == a.asset_id)
     |> group_by([a, t, as], [a.type, as.name])
+    |> order_by([a, t, as], a.type)
     |> select([a, t, as], {a.type, as.name, sum(a.units)})
     |> Repo.all()
   end
+
+  @spec average_cost(list(tuple())) :: tuple() | nil
+  def average_cost([{:buy_asset, _asset_name, units}, {:sell_asset, cost_asset_name, cost_units}]) do
+    Utils.assert(
+      cost_units |> Decimal.compare(Decimal.new(0)) == :lt,
+      "cost_units should be negative"
+    )
+
+    {cost_asset_name, cost_units |> Decimal.negate() |> Decimal.div(units)}
+  end
+
+  def average_cost(_others), do: nil
 end
