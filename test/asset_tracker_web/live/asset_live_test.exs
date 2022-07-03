@@ -42,7 +42,7 @@ defmodule AssetTrackerWeb.AssetLiveAsset do
         |> follow_redirect(conn, Routes.asset_index_path(conn, :index))
 
       assert html =~ "Asset created successfully"
-      assert html =~ "some name"
+      assert html =~ "asset-"
     end
 
     test "updates asset in listing", %{conn: conn, asset: asset} do
