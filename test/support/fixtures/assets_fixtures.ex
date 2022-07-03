@@ -12,7 +12,7 @@ defmodule AssetTracker.AssetsFixtures do
       |> Enum.into(%{
         user_id: brokerage.user.id,
         brokerage_id: brokerage.id,
-        name: Map.get(attrs, :name) || "some name",
+        name: Map.get(attrs, :name) || "asset#{System.unique_integer()}",
         units: (Map.get(attrs, :units) || 10.0) |> Decimal.from_float()
       })
       |> AssetTracker.Assets.create_asset()
