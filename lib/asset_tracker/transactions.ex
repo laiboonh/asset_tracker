@@ -10,6 +10,7 @@ defmodule AssetTracker.Transactions do
   def list_transactions(user_id) do
     from(Transaction)
     |> where([t], t.user_id == ^user_id)
+    |> order_by([t], desc: t.transacted_at)
     |> Repo.all()
     |> Repo.preload(actions: [:asset], brokerage: [])
   end
