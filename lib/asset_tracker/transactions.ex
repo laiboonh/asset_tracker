@@ -6,17 +6,25 @@ defmodule AssetTracker.Transactions do
 
   alias AssetTracker.Transactions.{Action, Transaction}
 
-  def list_transactions do
-    Repo.all(Transaction)
+  @spec list_transactions(Ecto.UUID.t()) :: [Transaction.t()]
+  def list_transactions(user_id) do
+    from(Transaction)
+    |> where([t], t.user_id == ^user_id)
+    |> Repo.all()
     |> Repo.preload(actions: [:asset], brokerage: [])
   end
 
-  def list_actions do
-    Repo.all(Action)
-  end
+  @spec get_transaction(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, Transaction.t()} | {:error, :not_found | :unauthorized}
+  def get_transaction(id, user_id) do
+    case Repo.get(Transaction, id) |> Repo.preload(actions: [:asset], brokerage: []) do
+      nil ->
+        {:error, :not_found}
 
-  def get_transaction!(id),
-    do: Repo.get!(Transaction, id) |> Repo.preload(actions: [:asset], brokerage: [])
+      transaction ->
+        if transaction.user_id == user_id, do: {:ok, transaction}, else: {:error, :unauthorized}
+    end
+  end
 
   defp create_transaction(attrs) do
     %Transaction{}
@@ -44,19 +52,21 @@ defmodule AssetTracker.Transactions do
     |> Repo.transaction()
   end
 
-  @spec delete_transaction(struct()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  defp delete_transaction(%Transaction{} = transaction) do
-    transaction
-    |> Transaction.changeset(%{})
-    |> Repo.delete()
-  end
-
-  @spec delete_transaction_and_update_assets(non_neg_integer()) ::
+  @spec delete_transaction_and_update_assets(Ecto.UUID.t(), Ecto.UUID.t()) ::
           {:ok, any()}
           | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
-  def delete_transaction_and_update_assets(id) do
-    transaction = get_transaction!(id)
+          | {:error, :not_found | :unauthorized}
+  def delete_transaction_and_update_assets(id, user_id) do
+    case get_transaction(id, user_id) do
+      {:ok, transaction} ->
+        do_delete_transaction_and_update_assets(transaction)
 
+      others ->
+        others
+    end
+  end
+
+  defp do_delete_transaction_and_update_assets(transaction) do
     Ecto.Multi.new()
     |> Ecto.Multi.run(:update_assets, fn _repo, %{} ->
       results =
@@ -73,6 +83,13 @@ defmodule AssetTracker.Transactions do
       delete_transaction(transaction)
     end)
     |> Repo.transaction()
+  end
+
+  @spec delete_transaction(struct()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  defp delete_transaction(%Transaction{} = transaction) do
+    transaction
+    |> Transaction.changeset(%{})
+    |> Repo.delete()
   end
 
   def change_transaction(%Transaction{} = transaction, params \\ %{}),

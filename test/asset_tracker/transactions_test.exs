@@ -8,19 +8,16 @@ defmodule AssetTracker.TransactionsTest do
   import AssetTracker.TransactionsFixtures
 
   describe "transactions" do
-    test "list_transactions/0 returns all transaction" do
+    test "list_transactions/1 returns all transaction" do
       transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
-      assert Transactions.list_transactions() == [transaction]
+      assert Transactions.list_transactions(transaction.user_id) == [transaction]
     end
 
-    test "list_actions/0 returns all action" do
-      transaction = transaction_fixture()
-      assert Transactions.list_actions() == transaction.actions
-    end
-
-    test "get_transaction!/1 returns the transaction with given id" do
+    test "get_transaction/2 returns the transaction with given id" do
       transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
-      assert Transactions.get_transaction!(transaction.id) == transaction
+
+      assert Transactions.get_transaction(transaction.id, transaction.user_id) ==
+               {:ok, transaction}
     end
 
     test "create_transaction_update_assets/1 with valid data creates a transaction" do
@@ -74,7 +71,7 @@ defmodule AssetTracker.TransactionsTest do
       assert errors |> Keyword.keys() |> Enum.member?(:transacted_at)
     end
 
-    test "delete_transaction_and_update_assets/1 with valid data deletes transaction and revert updates done to assets" do
+    test "delete_transaction_and_update_assets/2 with valid data deletes transaction and revert updates done to assets" do
       asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
 
       valid_attrs = %{
@@ -101,15 +98,15 @@ defmodule AssetTracker.TransactionsTest do
 
       assert asset.units == Decimal.from_float(15.0)
 
-      assert {:ok, _results} = Transactions.delete_transaction_and_update_assets(transaction.id)
+      assert {:ok, _results} =
+               Transactions.delete_transaction_and_update_assets(transaction.id, asset.user_id)
 
       {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
       assert asset.units == Decimal.from_float(10.0)
 
-      assert_raise Ecto.NoResultsError, fn ->
-        AssetTracker.Transactions.get_transaction!(transaction.id)
-      end
+      assert AssetTracker.Transactions.get_transaction(transaction.id, asset.user_id) ==
+               {:error, :not_found}
     end
   end
 end

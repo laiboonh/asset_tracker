@@ -6,6 +6,8 @@ defmodule AssetTracker.Transactions.Transaction do
 
   alias AssetTracker.Transactions.Action
 
+  @type t :: %__MODULE__{}
+
   @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "transactions" do
