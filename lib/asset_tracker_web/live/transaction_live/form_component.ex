@@ -49,12 +49,7 @@ defmodule AssetTrackerWeb.TransactionLive.FormComponent do
     existing_actions =
       Map.get(socket.assigns.changeset.changes, :actions, socket.assigns.transaction.actions)
 
-    actions =
-      existing_actions
-      |> Enum.concat([
-        # NOTE temp_id
-        Transactions.change_action(%Action{temp_id: get_temp_id()})
-      ])
+    actions = [Transactions.change_action(%Action{temp_id: get_temp_id()}) | existing_actions]
 
     changeset = socket.assigns.changeset |> Ecto.Changeset.put_assoc(:actions, actions)
 
