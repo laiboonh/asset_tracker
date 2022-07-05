@@ -41,30 +41,28 @@ defmodule AssetTracker.Transactions.Action do
     validate_change(changeset, :units, fn field, value ->
       type = fetch_change!(changeset, :type)
 
-      case type in [:transfer_in, :buy_asset] do
-        true ->
-          case Decimal.compare(value, Decimal.new(0)) do
-            result when result in [:gt, :eq] ->
-              []
+      if type in [:transfer_in, :buy_asset] do
+        case Decimal.compare(value, Decimal.new(0)) do
+          result when result in [:gt, :eq] ->
+            []
 
-            _others ->
-              [
-                {field,
-                 "should be positive because action type is \"#{Utils.atom_to_string(type)}\""}
-              ]
-          end
+          _others ->
+            [
+              {field,
+               "should be positive because action type is \"#{Utils.atom_to_string(type)}\""}
+            ]
+        end
+      else
+        case Decimal.compare(value, Decimal.new(0)) do
+          result when result in [:lt] ->
+            []
 
-        false ->
-          case Decimal.compare(value, Decimal.new(0)) do
-            result when result in [:lt] ->
-              []
-
-            _others ->
-              [
-                {field,
-                 "should be negative because action type is \"#{Utils.atom_to_string(type)}\""}
-              ]
-          end
+          _others ->
+            [
+              {field,
+               "should be negative because action type is \"#{Utils.atom_to_string(type)}\""}
+            ]
+        end
       end
     end)
   end
