@@ -8,4 +8,9 @@ defmodule AssetTracker.Utils do
   def assert(bool, error_message) do
     if bool == false, do: raise(error_message)
   end
+
+  @spec atom_to_string(atom) :: binary
+  def atom_to_string(atom) do
+    Atom.to_string(atom) |> String.replace("_", " ") |> String.capitalize()
+  end
 end

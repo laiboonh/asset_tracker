@@ -10,7 +10,16 @@ defmodule AssetTracker.TransactionsTest do
   describe "transactions" do
     test "list_transactions/1 returns all transaction" do
       transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
-      assert Transactions.list_transactions(transaction.user_id) == [transaction]
+      [%{asset: asset}] = transaction.actions
+
+      another_transaction =
+        transaction_fixture(%{asset: asset, transacted_at: Date.utc_today() |> Date.add(3)})
+        |> Repo.preload(actions: [:asset], brokerage: [])
+
+      assert Transactions.list_transactions(transaction.user_id) == [
+               another_transaction,
+               transaction
+             ]
     end
 
     test "get_transaction/2 returns the transaction with given id" do
@@ -32,7 +41,7 @@ defmodule AssetTracker.TransactionsTest do
           %{
             asset_id: asset.id,
             units: -5.0,
-            type: :transfer_in
+            type: :transfer_out
           }
         ]
       }
@@ -46,6 +55,54 @@ defmodule AssetTracker.TransactionsTest do
       {:ok, asset} = AssetTracker.Assets.get_asset(asset.id, asset.user_id)
 
       assert asset.units == Decimal.from_float(5.0)
+    end
+
+    test "create_transaction_update_assets/1 with actions of wrongly signed units for its type returns error changeset" do
+      asset = asset_fixture() |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      invalid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :deposit,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: -5.0,
+            type: :transfer_in
+          }
+        ]
+      }
+
+      {:error, :create_transaction,
+       %Ecto.Changeset{changes: %{actions: [%Ecto.Changeset{errors: errors}]}},
+       _changes_so_far} = Transactions.create_transaction_update_assets(invalid_attrs)
+
+      assert errors == [
+               units: {"should be positive because action type is \"Transfer in\"", []}
+             ]
+
+      invalid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :deposit,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: 5.0,
+            type: :transfer_out
+          }
+        ]
+      }
+
+      {:error, :create_transaction,
+       %Ecto.Changeset{changes: %{actions: [%Ecto.Changeset{errors: errors}]}},
+       _changes_so_far} = Transactions.create_transaction_update_assets(invalid_attrs)
+
+      assert errors == [
+               units: {"should be negative because action type is \"Transfer out\"", []}
+             ]
     end
 
     test "create_transaction_update_assets/1 with invalid data returns error changeset" do
