@@ -1,0 +1,40 @@
+<h1>Show Portfolio</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.portfolio_show_path(@socket, :show, @portfolio)}>
+    <.live_component
+      module={AssetTrackerWeb.PortfolioLive.FormComponent}
+      id={@portfolio.id}
+      title={@page_title}
+      action={@live_action}
+      portfolio={@portfolio}
+      user_id={@user_id}
+      return_to={Routes.portfolio_show_path(@socket, :show, @portfolio)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+  <li>
+    <strong>Name:</strong>
+    <%= @portfolio.name %>
+  </li>
+  <li>
+    <strong>Assets:</strong>
+    <dl>
+      <%= for asset <- @portfolio.assets do %>
+        <dt>
+          <%= asset.name %> (<%= asset.brokerage.name %>)
+        </dt>
+      <% end %>
+    </dl>
+  </li>
+</ul>
+
+<span>
+  <%= live_patch("Edit",
+    to: Routes.portfolio_show_path(@socket, :edit, @portfolio),
+    class: "button"
+  ) %>
+</span>
+| <span><%= live_redirect("Back", to: Routes.portfolio_index_path(@socket, :index)) %></span>

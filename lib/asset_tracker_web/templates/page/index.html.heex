@@ -4,6 +4,9 @@
     &#8680; <%= link("Assets", to: Routes.asset_index_path(@conn, :index)) %>
     <%= if !Enum.empty?(@assets) do %>
       &#8680; <%= link("Transactions", to: Routes.transaction_index_path(@conn, :index)) %>
+      <%= if !Enum.empty?(@transactions) do %>
+        &#8680; <%= link("Portfolios", to: Routes.portfolio_index_path(@conn, :index)) %>
+      <% end %>
     <% end %>
   <% end %>
 <% end %>

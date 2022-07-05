@@ -26,8 +26,7 @@ defmodule AssetTracker.Portfolios.Portfolio do
     |> unique_constraint([:name, :user_id])
     |> Ecto.Changeset.put_assoc(
       :assets,
-      Map.get(params, :assets, []),
-      :required
+      Map.get(params, :selected_assets, Map.get(params, "selected_assets", []))
     )
   end
 end

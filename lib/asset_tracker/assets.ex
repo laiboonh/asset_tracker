@@ -12,6 +12,14 @@ defmodule AssetTracker.Assets do
     from(Asset) |> where([a], a.user_id == ^user_id) |> preload(:brokerage) |> Repo.all()
   end
 
+  @spec list_assets_by_ids(Ecto.UUID.t(), list(Ecto.UUID.t())) :: [Asset.t()]
+  def list_assets_by_ids(user_id, ids) do
+    from(Asset)
+    |> where([a], a.user_id == ^user_id and a.id in ^ids)
+    |> preload(:brokerage)
+    |> Repo.all()
+  end
+
   @spec list_assets_by_brokerage(Ecto.UUID.t(), Ecto.UUID.t()) :: [Asset.t()]
   def list_assets_by_brokerage(brokerage_id, user_id) do
     from(Asset)

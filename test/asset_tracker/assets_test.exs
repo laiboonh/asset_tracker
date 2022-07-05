@@ -15,6 +15,11 @@ defmodule AssetTracker.AssetsTest do
       assert Assets.list_assets(asset.user_id) == [asset]
     end
 
+    test "list_assets_by_id/1 returns all assets belonging to user_id" do
+      asset = asset_fixture()
+      assert Assets.list_assets_by_ids(asset.user_id, [asset.id]) == [asset]
+    end
+
     test "list_assets_by_brokerage/2 returns all assets" do
       asset1 = asset_fixture() |> AssetTracker.Repo.preload(:user)
       user = asset1.user
