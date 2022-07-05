@@ -8,13 +8,16 @@ defmodule AssetTracker.Portfolios do
 
   @spec list_portfolios(Ecto.UUID.t()) :: [Portfolio.t()]
   def list_portfolios(user_id) do
-    from(Portfolio) |> where([b], b.user_id == ^user_id) |> Repo.all() |> Repo.preload(:assets)
+    from(Portfolio)
+    |> where([b], b.user_id == ^user_id)
+    |> Repo.all()
+    |> Repo.preload(assets: :brokerage)
   end
 
   @spec get_portfolio(Ecto.UUID.t(), Ecto.UUID.t()) ::
           {:ok, Portfolio.t()} | {:error, :not_found | :unauthorized}
   def get_portfolio(id, user_id) do
-    case Repo.get(Portfolio, id) |> Repo.preload(:assets) do
+    case Repo.get(Portfolio, id) |> Repo.preload(assets: :brokerage) do
       nil ->
         {:error, :not_found}
 

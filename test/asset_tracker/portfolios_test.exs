@@ -18,7 +18,10 @@ defmodule AssetTracker.PortfolioTest do
 
       _another_portfolio = portfolio_fixture()
 
-      assert [%Portfolio{id: ^portfolio_id}] = Portfolios.list_portfolios(portfolio.user_id)
+      assert [%Portfolio{id: ^portfolio_id, assets: assets}] =
+               Portfolios.list_portfolios(portfolio.user_id)
+
+      assert length(assets) == 1
     end
 
     test "get_portfolio/2 returns the portfolio with given id" do

@@ -1,7 +1,7 @@
 defmodule AssetTrackerWeb.PageController do
   use AssetTrackerWeb, :controller
 
-  alias AssetTracker.{Assets, Brokerages}
+  alias AssetTracker.{Assets, Brokerages, Transactions}
 
   def index(conn, _params) do
     conn =
@@ -11,6 +11,7 @@ defmodule AssetTrackerWeb.PageController do
         conn
         |> assign(:brokerages, Brokerages.list_brokerages(user.id))
         |> assign(:assets, Assets.list_assets(user.id))
+        |> assign(:transactions, Transactions.list_transactions())
       else
         nil -> conn
       end

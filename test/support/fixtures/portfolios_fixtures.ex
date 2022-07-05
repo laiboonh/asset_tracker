@@ -11,7 +11,7 @@ defmodule AssetTracker.PortfoliosFixtures do
       |> Enum.into(%{
         user_id: asset.user_id,
         name: "portfolio#{System.unique_integer()}",
-        assets: [asset]
+        selected_assets: [asset]
       })
       |> AssetTracker.Portfolios.create_portfolio()
 

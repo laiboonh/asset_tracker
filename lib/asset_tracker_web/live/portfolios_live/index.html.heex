@@ -1,0 +1,59 @@
+<h1>Listing Portfolios</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.portfolio_index_path(@socket, :index)}>
+    <.live_component
+      module={AssetTrackerWeb.PortfolioLive.FormComponent}
+      id={@portfolio.id || :new}
+      title={@page_title}
+      action={@live_action}
+      portfolio={@portfolio}
+      user_id={@user_id}
+      return_to={Routes.portfolio_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Assets</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="portfolios">
+    <%= for portfolio <- @portfolios do %>
+      <tr id={"portfolio-#{portfolio.id}"}>
+        <td><%= portfolio.name %></td>
+        <td>
+          <dl>
+            <%= for asset <- portfolio.assets do %>
+              <dt>
+                <%= asset.name %> (<%= asset.brokerage.name %>)
+              </dt>
+            <% end %>
+          </dl>
+        </td>
+        <td>
+          <span>
+            <%= live_redirect("Show", to: Routes.portfolio_show_path(@socket, :show, portfolio)) %>
+          </span>
+          <span>
+            <%= live_patch("Edit", to: Routes.portfolio_index_path(@socket, :edit, portfolio)) %>
+          </span>
+          <span>
+            <%= link("Delete",
+              to: "#",
+              phx_click: "delete",
+              phx_value_id: portfolio.id,
+              data: [confirm: "Are you sure?"]
+            ) %>
+          </span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch("New Portfolio", to: Routes.portfolio_index_path(@socket, :new)) %></span>
