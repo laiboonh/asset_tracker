@@ -11,7 +11,7 @@ defmodule AssetTrackerWeb.PageController do
         conn
         |> assign(:brokerages, Brokerages.list_brokerages(user.id))
         |> assign(:assets, Assets.list_assets(user.id))
-        |> assign(:transactions, Transactions.list_transactions())
+        |> assign(:transactions, Transactions.list_transactions(user.id))
       else
         nil -> conn
       end

@@ -9,10 +9,13 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
+    socket =
+      socket
+      |> assign(:user_id, Utils.get_user_id(session))
+
     {:ok,
      socket
-     |> assign(:transactions, list_transactions())
-     |> assign(:user_id, Utils.get_user_id(session))}
+     |> assign(:transactions, list_transactions(socket.assigns.user_id))}
   end
 
   @impl true
@@ -21,10 +24,27 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit Transaction")
-    |> assign(:transaction, Transactions.get_transaction!(id))
-    |> assign(:brokerages, brokerages(socket.assigns.user_id))
+    case Transactions.get_transaction(id, socket.assigns.user_id) do
+      {:ok, transaction} ->
+        socket
+        |> assign(:page_title, "Edit Transaction")
+        |> assign(:transaction, transaction)
+        |> assign(:brokerages, brokerages(socket.assigns.user_id))
+
+      {:error, :not_found} ->
+        socket
+        |> put_flash(
+          :info,
+          "Transaction with id #{id} not found"
+        )
+
+      {:error, :unauthorized} ->
+        socket
+        |> put_flash(
+          :info,
+          "Transaction with id #{id} does not belong to you"
+        )
+    end
   end
 
   defp apply_action(socket, :new, _params) do
@@ -46,13 +66,37 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    {:ok, _} = Transactions.delete_transaction_and_update_assets(id)
+    case Transactions.delete_transaction_and_update_assets(id, socket.assigns.user_id) do
+      {:ok, %{delete_transaction: transaction}} ->
+        {:noreply,
+         assign(
+           socket
+           |> put_flash(
+             :info,
+             "#{Utils.atom_to_string(transaction.type)} transaction deleted successfully"
+           ),
+           :transactions,
+           list_transactions(socket.assigns.user_id)
+         )}
 
-    {:noreply, assign(socket, :transactions, list_transactions())}
+      {:error, :not_found} ->
+        socket
+        |> put_flash(
+          :info,
+          "Transaction with id #{id} not found"
+        )
+
+      {:error, :unauthorized} ->
+        socket
+        |> put_flash(
+          :info,
+          "Transaction with id #{id} does not belong to you"
+        )
+    end
   end
 
-  defp list_transactions do
-    Transactions.list_transactions()
+  defp list_transactions(user_id) do
+    Transactions.list_transactions(user_id)
   end
 
   defp brokerages(user_id) do
