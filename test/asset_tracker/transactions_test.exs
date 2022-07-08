@@ -16,10 +16,9 @@ defmodule AssetTracker.TransactionsTest do
         transaction_fixture(%{asset: asset, transacted_at: Date.utc_today() |> Date.add(3)})
         |> Repo.preload(actions: [:asset], brokerage: [])
 
-      assert Transactions.list_transactions(transaction.user_id) == [
-               another_transaction,
-               transaction
-             ]
+      %{entries: entries} = Transactions.list_transactions(transaction.user_id)
+
+      assert entries == [another_transaction, transaction]
     end
 
     test "get_transaction/2 returns the transaction with given id" do

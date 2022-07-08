@@ -6,13 +6,13 @@ defmodule AssetTracker.Transactions do
 
   alias AssetTracker.Transactions.{Action, Transaction}
 
-  @spec list_transactions(Ecto.UUID.t()) :: [Transaction.t()]
-  def list_transactions(user_id) do
+  @spec list_transactions(Ecto.UUID.t()) :: Scrivener.Page.t()
+  def list_transactions(user_id, options \\ %{}) do
     from(Transaction)
     |> where([t], t.user_id == ^user_id)
     |> order_by([t], desc: t.transacted_at)
-    |> Repo.all()
-    |> Repo.preload(actions: [:asset], brokerage: [])
+    |> preload(actions: [:asset], brokerage: [])
+    |> Repo.paginate(options)
   end
 
   @spec get_transaction(Ecto.UUID.t(), Ecto.UUID.t()) ::
