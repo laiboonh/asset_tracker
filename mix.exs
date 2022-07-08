@@ -60,7 +60,8 @@ defmodule AssetTracker.MixProject do
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:elixir_auth_google, "~> 1.6.3"},
       {:excoveralls, "~> 0.10", only: :test},
-      {:mimic, "~> 1.7", only: :test}
+      {:mimic, "~> 1.7", only: :test},
+      {:scrivener_ecto, "~> 2.7"}
     ]
   end
 

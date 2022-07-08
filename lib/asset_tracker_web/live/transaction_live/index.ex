@@ -15,7 +15,12 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
 
     {:ok,
      socket
-     |> assign(:transactions, list_transactions(socket.assigns.user_id))}
+     |> assign_transactions()}
+  end
+
+  @impl true
+  def handle_params(%{"page" => page}, _, socket) do
+    {:noreply, socket |> assign_transactions(page)}
   end
 
   @impl true
@@ -64,20 +69,21 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
     |> assign(:transaction, nil)
   end
 
+  def handle_event("nav", %{"page" => page}, socket) do
+    {:noreply, push_patch(socket, to: Routes.transaction_index_path(socket, :index, page: page))}
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     case Transactions.delete_transaction_and_update_assets(id, socket.assigns.user_id) do
       {:ok, %{delete_transaction: transaction}} ->
         {:noreply,
-         assign(
-           socket
-           |> put_flash(
-             :info,
-             "#{Utils.atom_to_string(transaction.type)} transaction deleted successfully"
-           ),
-           :transactions,
-           list_transactions(socket.assigns.user_id)
-         )}
+         socket
+         |> put_flash(
+           :info,
+           "#{Utils.atom_to_string(transaction.type)} transaction deleted successfully"
+         )
+         |> assign_transactions()}
 
       {:error, :not_found} ->
         socket
@@ -95,8 +101,27 @@ defmodule AssetTrackerWeb.TransactionLive.Index do
     end
   end
 
-  defp list_transactions(user_id) do
-    Transactions.list_transactions(user_id)
+  def assign_transactions(socket, page_number \\ 0) do
+    %{
+      entries: entries,
+      page_number: page_number,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
+    } =
+      if page_number == 0,
+        do: Transactions.list_transactions(socket.assigns.user_id),
+        else: Transactions.list_transactions(socket.assigns.user_id, page: page_number)
+
+    assigns = [
+      transactions: entries,
+      page_number: page_number,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
+    ]
+
+    assign(socket, assigns)
   end
 
   defp brokerages(user_id) do
