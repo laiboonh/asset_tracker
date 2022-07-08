@@ -107,5 +107,22 @@ defmodule AssetTracker.Assets do
     {cost_asset_name, cost_units |> Decimal.negate() |> Decimal.div(units)}
   end
 
+  def average_cost([
+        {:buy_asset, _asset_name, units},
+        {:commission, cost_asset_name, commission_units},
+        {:sell_asset, cost_asset_name, cost_units}
+      ]) do
+    Utils.assert(
+      cost_units |> Decimal.compare(Decimal.new(0)) == :lt &&
+        commission_units |> Decimal.compare(Decimal.new(0)) == :lt,
+      "cost_units & commission_units should be negative"
+    )
+
+    cost_units = cost_units |> Decimal.negate()
+    commission_units = commission_units |> Decimal.negate()
+
+    {cost_asset_name, cost_units |> Decimal.add(commission_units) |> Decimal.div(units)}
+  end
+
   def average_cost(_others), do: nil
 end

@@ -206,5 +206,68 @@ defmodule AssetTracker.AssetsTest do
 
       assert Assets.average_cost(total_costs) == {"USD", Decimal.new(5)}
     end
+
+    test "average_costs/1 returns average cost of asset with commission" do
+      asset =
+        asset_fixture(%{name: "QQQ", units: 0.0})
+        |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      money =
+        asset_fixture(%{brokerage: asset.brokerage, name: "USD", units: 100.0})
+        |> AssetTracker.Repo.preload([:user, :brokerage])
+
+      valid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :buy_stock,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: 10.0,
+            type: :buy_asset
+          },
+          %{
+            asset_id: money.id,
+            units: -50.0,
+            type: :sell_asset
+          },
+          %{
+            asset_id: money.id,
+            units: -50.0,
+            type: :commission
+          }
+        ]
+      }
+
+      assert {:ok, _results} =
+               AssetTracker.Transactions.create_transaction_update_assets(valid_attrs)
+
+      valid_attrs = %{
+        user_id: asset.user.id,
+        brokerage_id: asset.brokerage.id,
+        transacted_at: Date.utc_today(),
+        type: :sell_stock,
+        actions: [
+          %{
+            asset_id: asset.id,
+            units: -5.0,
+            type: :sell_asset
+          },
+          %{
+            asset_id: money.id,
+            units: 20.0,
+            type: :buy_asset
+          }
+        ]
+      }
+
+      assert {:ok, _results} =
+               AssetTracker.Transactions.create_transaction_update_assets(valid_attrs)
+
+      total_costs = Assets.total_costs(asset.id)
+
+      assert Assets.average_cost(total_costs) == {"USD", Decimal.new(10)}
+    end
   end
 end
