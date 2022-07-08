@@ -26,7 +26,8 @@ config :asset_tracker, AssetTrackerWeb.Endpoint,
   secret_key_base: "sCrZzpHfNWVFbgHjmoAMXvdmRedRHQAGO4AKxbpJz2LS4KBMDp0IAGfpKyO4Tb11",
   watchers: [
     # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 
 # ## SSL Support
