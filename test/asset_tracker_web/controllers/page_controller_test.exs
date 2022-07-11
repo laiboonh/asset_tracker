@@ -1,8 +1,16 @@
 defmodule AssetTrackerWeb.PageControllerTest do
-  use AssetTrackerWeb.ConnCase
+  use AssetTrackerWeb.ConnCase, async: true
 
-  test "GET /", %{conn: conn} do
-    conn = get(conn, "/")
-    assert html_response(conn, 200) =~ "Welcome to Asset Tracker!"
+  import AssetTracker.AccountsFixtures
+
+  setup do
+    %{user: user_fixture()}
+  end
+
+  describe "GET /" do
+    test "logged in new user shows at least a Brokerages link", %{conn: conn, user: user} do
+      conn = conn |> log_in_user(user) |> get("/")
+      assert html_response(conn, 200) =~ "Brokerages"
+    end
   end
 end

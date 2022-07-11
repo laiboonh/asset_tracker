@@ -1,17 +1,41 @@
 <%= if @current_user do %>
-  <%= link("Brokerages", to: Routes.brokerage_index_path(@conn, :index)) %>
-  <%= if !Enum.empty?(@brokerages) do %>
-    &#8680; <%= link("Assets", to: Routes.asset_index_path(@conn, :index)) %>
-    <%= if !Enum.empty?(@assets) do %>
-      &#8680; <%= link("Transactions", to: Routes.transaction_index_path(@conn, :index)) %>
-      <%= if !Enum.empty?(@transactions) do %>
-        &#8680; <%= link("Portfolios", to: Routes.portfolio_index_path(@conn, :index)) %>
-      <% end %>
-    <% end %>
-  <% end %>
+  <div class="mx-6 mt-6 text-gray-500">
+    <nav class="rounded-md w-full">
+      <ol class="list-reset flex">
+        <li>
+          <%= link("Brokerages",
+            to: Routes.brokerage_index_path(@conn, :index),
+            class: "text-blue-600 hover:text-blue-700"
+          ) %>
+        </li>
+        <%= if !Enum.empty?(@brokerages) do %>
+          <li><span class="text-gray-500 mx-2">|</span></li>
+          <li>
+            <%= link("Assets",
+              to: Routes.asset_index_path(@conn, :index),
+              class: "text-blue-600 hover:text-blue-700"
+            ) %>
+          </li>
+          <%= if !Enum.empty?(@assets) do %>
+            <li><span class="text-gray-500 mx-2">|</span></li>
+            <li>
+              <%= link("Transactions",
+                to: Routes.transaction_index_path(@conn, :index),
+                class: "text-blue-600 hover:text-blue-700"
+              ) %>
+            </li>
+            <%= if !Enum.empty?(@transactions) do %>
+              <li><span class="text-gray-500 mx-2">|</span></li>
+              <li>
+                <%= link("Portfolios",
+                  to: Routes.portfolio_index_path(@conn, :index),
+                  class: "text-blue-600 hover:text-blue-700"
+                ) %>
+              </li>
+            <% end %>
+          <% end %>
+        <% end %>
+      </ol>
+    </nav>
+  </div>
 <% end %>
-
-<section class="phx-hero">
-  <h1><%= gettext("Welcome to %{name}!", name: "Asset Tracker") %></h1>
-  <p>Peace of mind how much you are investing</p>
-</section>

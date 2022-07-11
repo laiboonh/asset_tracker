@@ -1,4 +1,12 @@
-<h1>Listing Portfolios</h1>
+<div class="mx-6 mt-6 text-gray-500">
+  <nav class="rounded-md w-full">
+    <ol class="list-reset flex">
+      <li class="text-blue-600 hover:text-blue-700"><a href="/">Home</a></li>
+      <li><span class="text-gray-500 mx-2">/</span></li>
+      <li class="text-gray-500">List Portfolios</li>
+    </ol>
+  </nav>
+</div>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.portfolio_index_path(@socket, :index)}>
@@ -14,46 +22,64 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Assets</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="portfolios">
-    <%= for portfolio <- @portfolios do %>
-      <tr id={"portfolio-#{portfolio.id}"}>
-        <td><%= portfolio.name %></td>
-        <td>
-          <dl>
-            <%= for asset <- portfolio.assets do %>
-              <dt>
-                <%= asset.name %> (<%= asset.brokerage.name %>)
-              </dt>
+<div class="flex flex-col mb-6 mt-6 mx-6">
+  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="overflow-hidden">
+        <table class="min-w-full">
+          <thead class="border-b">
+            <tr>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Name</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Assets</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left"></th>
+            </tr>
+          </thead>
+          <tbody id="portfolios">
+            <%= for portfolio <- @portfolios do %>
+              <tr id={"portfolio-#{portfolio.id}"} class="border-b">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <%= portfolio.name %>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <dl>
+                    <%= for asset <- portfolio.assets do %>
+                      <dt>
+                        <%= asset.name %> (<%= asset.brokerage.name %>)
+                      </dt>
+                    <% end %>
+                  </dl>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <span class="text-base">
+                    <%= live_redirect("Show",
+                      to: Routes.portfolio_show_path(@socket, :show, portfolio)
+                    ) %>
+                  </span>
+                  <span class="text-base">
+                    <%= live_patch("Edit",
+                      to: Routes.portfolio_index_path(@socket, :edit, portfolio)
+                    ) %>
+                  </span>
+                  <span class="text-base">
+                    <%= link("Delete",
+                      to: "#",
+                      phx_click: "delete",
+                      phx_value_id: portfolio.id,
+                      data: [confirm: "Are you sure?"]
+                    ) %>
+                  </span>
+                </td>
+              </tr>
             <% end %>
-          </dl>
-        </td>
-        <td>
-          <span>
-            <%= live_redirect("Show", to: Routes.portfolio_show_path(@socket, :show, portfolio)) %>
-          </span>
-          <span>
-            <%= live_patch("Edit", to: Routes.portfolio_index_path(@socket, :edit, portfolio)) %>
-          </span>
-          <span>
-            <%= link("Delete",
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: portfolio.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
-          </span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-<span><%= live_patch("New Portfolio", to: Routes.portfolio_index_path(@socket, :new)) %></span>
+<div class="mx-6">
+  <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
+    <%= live_patch("New Portfolio", to: Routes.portfolio_index_path(@socket, :new)) %>
+  </button>
+</div>

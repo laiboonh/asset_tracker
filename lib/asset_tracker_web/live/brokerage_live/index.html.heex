@@ -1,4 +1,12 @@
-<h1>Listing Brokerages</h1>
+<div class="mx-6 mt-6 text-gray-500">
+  <nav class="rounded-md w-full">
+    <ol class="list-reset flex">
+      <li class="text-blue-600 hover:text-blue-700"><a href="/">Home</a></li>
+      <li><span class="text-gray-500 mx-2">/</span></li>
+      <li class="text-gray-500">List Brokerages</li>
+    </ol>
+  </nav>
+</div>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.brokerage_index_path(@socket, :index)}>
@@ -14,27 +22,56 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
+<div class="flex flex-col mb-6 mt-6 mx-6">
+  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="overflow-hidden">
+        <table class="min-w-full">
+          <thead class="border-b">
+            <tr>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Name</th>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="brokerages">
-    <%= for brokerage <- @brokerages do %>
-      <tr id={"brokerage-#{brokerage.id}"}>
-        <td><%= brokerage.name %></td>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left"></th>
+            </tr>
+          </thead>
+          <tbody id="brokerages">
+            <%= for brokerage <- @brokerages do %>
+              <tr id={"brokerage-#{brokerage.id}"} class="border-b">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <%= brokerage.name %>
+                </td>
 
-        <td>
-          <span><%= live_redirect "Show", to: Routes.brokerage_show_path(@socket, :show, brokerage) %></span>
-          <span><%= live_patch "Edit", to: Routes.brokerage_index_path(@socket, :edit, brokerage) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: brokerage.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <span class="text-base">
+                    <%= live_redirect("Show",
+                      to: Routes.brokerage_show_path(@socket, :show, brokerage)
+                    ) %>
+                  </span>
+                  <span class="text-base">
+                    <%= live_patch("Edit",
+                      to: Routes.brokerage_index_path(@socket, :edit, brokerage)
+                    ) %>
+                  </span>
+                  <span class="text-base">
+                    <%= link("Delete",
+                      to: "#",
+                      phx_click: "delete",
+                      phx_value_id: brokerage.id,
+                      data: [confirm: "Are you sure?"]
+                    ) %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-<span><%= live_patch "New Brokerage", to: Routes.brokerage_index_path(@socket, :new) %></span>
+<div class="mx-6">
+  <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
+    <%= live_patch("New Brokerage", to: Routes.brokerage_index_path(@socket, :new)) %>
+  </button>
+</div>
