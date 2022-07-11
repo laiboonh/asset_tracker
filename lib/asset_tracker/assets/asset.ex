@@ -22,6 +22,6 @@ defmodule AssetTracker.Assets.Asset do
     brokerage
     |> cast(attrs, [:name, :units, :user_id, :brokerage_id])
     |> validate_required([:name, :units, :user_id, :brokerage_id])
-    |> unique_constraint([:brokerage_id, :name, :user_id])
+    |> unique_constraint([:name, :brokerage_id, :user_id])
   end
 end

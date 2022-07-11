@@ -11,6 +11,6 @@ defmodule AssetTracker.Repo.Migrations.CreateAssets do
       timestamps()
     end
 
-    create(unique_index(:assets, [:brokerage_id, :name, :user_id]))
+    create(unique_index(:assets, [:name, :brokerage_id, :user_id]))
   end
 end
