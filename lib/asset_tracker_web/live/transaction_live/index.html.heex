@@ -33,7 +33,6 @@
             <tr>
               <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Transacted At</th>
               <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Type</th>
-              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Brokerage</th>
               <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Actions</th>
               <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left"></th>
             </tr>
@@ -46,9 +45,6 @@
                 </td>
                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   <%= atom_to_string(transaction.type) %>
-                </td>
-                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                  <%= transaction.brokerage.name %>
                 </td>
                 <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                   <dl>

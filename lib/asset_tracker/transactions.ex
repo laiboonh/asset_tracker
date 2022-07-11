@@ -11,14 +11,14 @@ defmodule AssetTracker.Transactions do
     from(Transaction)
     |> where([t], t.user_id == ^user_id)
     |> order_by([t], desc: t.transacted_at)
-    |> preload(actions: [:asset], brokerage: [])
+    |> preload(actions: [:asset])
     |> Repo.paginate(options)
   end
 
   @spec get_transaction(Ecto.UUID.t(), Ecto.UUID.t()) ::
           {:ok, Transaction.t()} | {:error, :not_found | :unauthorized}
   def get_transaction(id, user_id) do
-    case Repo.get(Transaction, id) |> Repo.preload(actions: [:asset], brokerage: []) do
+    case Repo.get(Transaction, id) |> Repo.preload(actions: [:asset]) do
       nil ->
         {:error, :not_found}
 

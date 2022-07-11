@@ -9,12 +9,12 @@ defmodule AssetTracker.TransactionsTest do
 
   describe "transactions" do
     test "list_transactions/1 returns all transaction" do
-      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
+      transaction = transaction_fixture() |> Repo.preload(actions: [:asset])
       [%{asset: asset}] = transaction.actions
 
       another_transaction =
         transaction_fixture(%{asset: asset, transacted_at: Date.utc_today() |> Date.add(3)})
-        |> Repo.preload(actions: [:asset], brokerage: [])
+        |> Repo.preload(actions: [:asset])
 
       %{entries: entries} = Transactions.list_transactions(transaction.user_id)
 
@@ -22,7 +22,7 @@ defmodule AssetTracker.TransactionsTest do
     end
 
     test "get_transaction/2 returns the transaction with given id" do
-      transaction = transaction_fixture() |> Repo.preload(actions: [:asset], brokerage: [])
+      transaction = transaction_fixture() |> Repo.preload(actions: [:asset])
 
       assert Transactions.get_transaction(transaction.id, transaction.user_id) ==
                {:ok, transaction}

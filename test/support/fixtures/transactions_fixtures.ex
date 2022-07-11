@@ -6,13 +6,12 @@ defmodule AssetTracker.TransactionsFixtures do
   def transaction_fixture(attrs \\ %{}) do
     asset =
       (Map.get(attrs, :asset) || asset_fixture())
-      |> AssetTracker.Repo.preload([:user, :brokerage])
+      |> AssetTracker.Repo.preload([:user])
 
     {:ok, results} =
       attrs
       |> Enum.into(%{
         user_id: asset.user_id,
-        brokerage_id: asset.brokerage.id,
         transacted_at: Map.get(attrs, :transacted_at) || Date.utc_today(),
         type: :deposit,
         actions: [
