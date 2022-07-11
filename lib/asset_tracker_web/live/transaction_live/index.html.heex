@@ -1,4 +1,12 @@
-<h1>Listing Transactions</h1>
+<div class="mx-6 mt-6 text-gray-500">
+  <nav class="rounded-md w-full">
+    <ol class="list-reset flex">
+      <li class="text-blue-600 hover:text-blue-700"><a href="/">Home</a></li>
+      <li><span class="text-gray-500 mx-2">/</span></li>
+      <li class="text-gray-500">List Transactions</li>
+    </ol>
+  </nav>
+</div>
 
 <%= if @live_action in [:new, :edit] do %>
   <.modal return_to={Routes.transaction_index_path(@socket, :index)}>
@@ -16,97 +24,112 @@
   </.modal>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Transacted At</th>
-      <th>Type</th>
-      <th>Brokerage</th>
-      <th>Actions</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="transactions">
-    <%= for transaction <- @transactions do %>
-      <tr id={"transaction-#{transaction.id}"}>
-        <td><%= transaction.transacted_at %></td>
-        <td><%= atom_to_string(transaction.type) %></td>
-        <td><%= transaction.brokerage.name %></td>
-        <td>
-          <dl>
-            <%= for action <- transaction.actions do %>
-              <dt>
-                <%= action.units %>
-                <%= action.asset.name %>
-                <%= atom_to_string(action.type) %>
-              </dt>
+<div class="flex flex-col mb-6 mt-6 mx-6">
+  <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="overflow-hidden">
+        <table class="min-w-full">
+          <thead class="border-b">
+            <tr>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Transacted At</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Type</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Brokerage</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">Actions</th>
+              <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left"></th>
+            </tr>
+          </thead>
+          <tbody id="transactions">
+            <%= for transaction <- @transactions do %>
+              <tr id={"transaction-#{transaction.id}"} class="border-b">
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <%= transaction.transacted_at %>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <%= atom_to_string(transaction.type) %>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <%= transaction.brokerage.name %>
+                </td>
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <dl>
+                    <%= for action <- transaction.actions do %>
+                      <dt>
+                        <%= action.units %>
+                        <%= action.asset.name %>
+                        <%= atom_to_string(action.type) %>
+                      </dt>
+                    <% end %>
+                  </dl>
+                </td>
+
+                <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                  <span class="text-base">
+                    <%= live_redirect("Show",
+                      to: Routes.transaction_show_path(@socket, :show, transaction)
+                    ) %>
+                  </span>
+                  <span class="text-base">
+                    <%= link("Delete",
+                      to: "#",
+                      phx_click: "delete",
+                      phx_value_id: transaction.id,
+                      data: [confirm: "Are you sure?"]
+                    ) %>
+                  </span>
+                </td>
+              </tr>
             <% end %>
-          </dl>
-        </td>
+          </tbody>
+        </table>
+        <nav>
+          <ul class="flex my-2">
+            <li class="text-sm font-medium text-gray-900 py-4">
+              <a
+                class={
+                  "px-2 py-2 #{if @page_number <= 1, do: "pointer-events-none text-gray-600", else: ""}"
+                }
+                href="#"
+                phx-click="nav"
+                phx-value-page={"#{@page_number - 1}"}
+              >
+                Previous
+              </a>
+            </li>
+            <%= for idx <-  Enum.to_list(1..@total_pages) do %>
+              <li class="text-sm font-medium text-gray-900 py-4">
+                <a
+                  class={
+                    "px-2 py-2 #{if @page_number == idx, do: "pointer-events-none text-gray-600", else: ""}"
+                  }
+                  href="#"
+                  phx-click="nav"
+                  phx-value-page={"#{idx}"}
+                >
+                  <%= idx %>
+                </a>
+              </li>
+            <% end %>
+            <li class="text-sm font-medium text-gray-900 py-4">
+              <a
+                class={
+                  "px-2 py-2 #{if @page_number >= @total_pages, do: "pointer-events-none text-gray-600", else: ""}"
+                }
+                href="#"
+                phx-click="nav"
+                phx-value-page={"#{@page_number + 1}"}
+              >
+                Next
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <td>
-          <span>
-            <%= live_redirect("Show",
-              to: Routes.transaction_show_path(@socket, :show, transaction)
-            ) %>
-          </span>
-          <span>
-            <%= link("Delete",
-              to: "#",
-              phx_click: "delete",
-              phx_value_id: transaction.id,
-              data: [confirm: "Are you sure?"]
-            ) %>
-          </span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<nav class="border-t border-gray-200">
-  <ul class="flex my-2">
-    <li class="">
-      <a
-        class={
-          "px-2 py-2 #{if @page_number <= 1, do: "pointer-events-none text-gray-600", else: ""}"
-        }
-        href="#"
-        phx-click="nav"
-        phx-value-page={"#{@page_number + 1}"}
-      >
-        Previous
-      </a>
-    </li>
-    <%= for idx <-  Enum.to_list(1..@total_pages) do %>
-      <li class="">
-        <a
-          class={
-            "px-2 py-2 #{if @page_number == idx, do: "pointer-events-none text-gray-600", else: ""}"
-          }
-          href="#"
-          phx-click="nav"
-          phx-value-page={"#{idx}"}
-        >
-          <%= idx %>
-        </a>
-      </li>
-    <% end %>
-    <li class="">
-      <a
-        class={
-          "px-2 py-2 #{if @page_number >= @total_pages, do: "pointer-events-none text-gray-600", else: ""}"
-        }
-        href="#"
-        phx-click="nav"
-        phx-value-page={"#{@page_number + 1}"}
-      >
-        Next
-      </a>
-    </li>
-  </ul>
-</nav>
-
-<span>
-  <%= live_patch("New Transaction", to: Routes.transaction_index_path(@socket, :new)) %>
-</span>
+<div class="mx-6">
+  <button class="shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded">
+    <%= live_patch("New Transaction", to: Routes.transaction_index_path(@socket, :new)) %>
+  </button>
+</div>

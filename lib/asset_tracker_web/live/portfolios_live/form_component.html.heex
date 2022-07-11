@@ -1,6 +1,4 @@
 <div>
-  <h2><%= @title %></h2>
-
   <.form
     let={f}
     for={@changeset}
@@ -8,17 +6,39 @@
     phx-target={@myself}
     phx-change="validate"
     phx-submit="save"
+    class="w-full max-w-lg"
   >
-    <%= label(f, :name) %>
-    <%= text_input(f, :name) %>
-    <%= error_tag(f, :name) %>
+    <div class="flex flex-wrap -mx-3 mb-6">
+      <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+        <%= label(f, :name,
+          class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+        ) %>
+        <%= text_input(f, :name,
+          class:
+            "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+        ) %>
+        <%= error_tag(f, :name) %>
+      </div>
 
-    <%= label(f, :assets) %>
-    <%= multiple_select(f, :assets, @assets, selected: @assets_selected) %>
-    <%= error_tag(f, :asset_ids) %>
+      <div class="w-full md:w-1/2 px-3">
+        <%= label(f, :assets,
+          class: "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+        ) %>
+        <%= multiple_select(f, :assets, @assets,
+          selected: @assets_selected,
+          class:
+            "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+        ) %>
+        <%= error_tag(f, :asset_ids) %>
+      </div>
+    </div>
 
     <div>
-      <%= submit("Save", phx_disable_with: "Saving...") %>
+      <%= submit("Save",
+        phx_disable_with: "Saving...",
+        class:
+          "shadow bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
+      ) %>
     </div>
   </.form>
 </div>

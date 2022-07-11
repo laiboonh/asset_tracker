@@ -15,20 +15,22 @@
     >
     </script>
   </head>
-  <body>
-    <header>
-      <section class="container">
-        <nav>
-          <ul>
-            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
-              <li><%= link("LiveDashboard", to: Routes.live_dashboard_path(@conn, :home)) %></li>
-            <% end %>
-          </ul>
-          <%= render("_user_menu.html", assigns) %>
-        </nav>
-        <a href="/" class="phx-logo">
+  <body class="container mx-auto">
+    <header class="bg-gray-100 mx-3">
+      <section class="justify-between items-center p-2 flex flex-wrap mt-2">
+        <a href="/">
           <img src={Routes.static_path(@conn, "/images/phoenix.png")} alt="Asset Tracker Logo" />
         </a>
+        <nav class="py-2 ml-5">
+          <ul class="">
+            <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
+              <li class="inline px-2">
+                <%= link("LiveDashboard", to: Routes.live_dashboard_path(@conn, :home)) %>
+              </li>
+            <% end %>
+            <%= render("_user_menu.html", assigns) %>
+          </ul>
+        </nav>
       </section>
     </header>
     <%= @inner_content %>

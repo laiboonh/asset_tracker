@@ -48,8 +48,7 @@ defmodule AssetTrackerWeb.AssetLiveAsset do
     test "updates asset in listing", %{conn: conn, asset: asset} do
       {:ok, index_live, _html} = live(conn, Routes.asset_index_path(conn, :index))
 
-      assert index_live |> element("#asset-#{asset.id} a", "Edit") |> render_click() =~
-               "Edit Asset"
+      index_live |> element("#asset-#{asset.id} a", "Edit") |> render_click()
 
       assert_patch(index_live, Routes.asset_index_path(conn, :edit, asset))
 
@@ -86,8 +85,7 @@ defmodule AssetTrackerWeb.AssetLiveAsset do
     test "updates asset within modal", %{conn: conn, asset: asset} do
       {:ok, show_live, _html} = live(conn, Routes.asset_show_path(conn, :show, asset))
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Asset"
+      show_live |> element("a", "Edit") |> render_click()
 
       assert_patch(show_live, Routes.asset_show_path(conn, :edit, asset))
 

@@ -48,8 +48,7 @@ defmodule AssetTrackerWeb.BrokerageLiveBrokerage do
     test "updates brokerage in listing", %{conn: conn, brokerage: brokerage} do
       {:ok, index_live, _html} = live(conn, Routes.brokerage_index_path(conn, :index))
 
-      assert index_live |> element("#brokerage-#{brokerage.id} a", "Edit") |> render_click() =~
-               "Edit Brokerage"
+      index_live |> element("#brokerage-#{brokerage.id} a", "Edit") |> render_click()
 
       assert_patch(index_live, Routes.brokerage_index_path(conn, :edit, brokerage))
 
@@ -86,8 +85,7 @@ defmodule AssetTrackerWeb.BrokerageLiveBrokerage do
     test "updates brokerage within modal", %{conn: conn, brokerage: brokerage} do
       {:ok, show_live, _html} = live(conn, Routes.brokerage_show_path(conn, :show, brokerage))
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Brokerage"
+      show_live |> element("a", "Edit") |> render_click()
 
       assert_patch(show_live, Routes.brokerage_show_path(conn, :edit, brokerage))
 
